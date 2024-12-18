@@ -10,19 +10,19 @@ services:
     ports:
       - '8080:8080'
     networks:
-      - 'local-network'
+      - 'localhost'
 
   mysqldb:
     image: mysql:8.0.35-oracle
     container_name: case-mysqldb
     restart: always
     environment:
-      MYSQL_DATABASE: 'mysql-db'
-      MYSQL_USER: 'user'
-      MYSQL_PASSWORD: 'password'
-      MYSQL_ROOT_PASSWORD: 'password'
+      MYSQL_DATABASE: 'dreamGames'
+      MYSQL_USER: 'root'
+      MYSQL_PASSWORD: 'frkn3756'
+      MYSQL_ROOT_PASSWORD: 'frkn3756'
     networks:
-      - 'local-network'
+      - 'localhost'
     ports:
       - '3306:3306'
     volumes:
