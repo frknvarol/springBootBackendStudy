@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dreamgames.backendengineeringcasestudy.model.Event;
-
 @Entity
 public class User {
     @Id
@@ -16,10 +14,10 @@ public class User {
     private String username;
 
     @Column(nullable = false)
-    private int coins;
+    private int coins = 2000;
 
     @Column(nullable = false)
-    private int level;
+    private int level = 1;
 
     @Column(nullable = false, length = 1)
     private Character abGroup;
@@ -33,9 +31,24 @@ public class User {
     @OneToMany(mappedBy = "user2", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Partnership> partnershipsAsUser2 = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LeaderBoard> leaderBoard = new ArrayList<>();
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private LeaderBoard leaderBoard;
 
+    public User(String username, Character abGroup) {
+        this.username = username;
+        this.abGroup = abGroup;
+    }
+
+    public User() {
+
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+                "User[id=%d, username='%s', coins='%d', level='%d', abGroup='%s', createdAt='%s']",
+                id, username, coins, level, abGroup, createdAt);
+    }
 
     public Long getId() {
         return id;
@@ -101,11 +114,11 @@ public class User {
         this.partnershipsAsUser2 = partnershipsAsUser2;
     }
 
-    public List<LeaderBoard> getLeaderBoard() {
+    public LeaderBoard getLeaderBoard() {
         return leaderBoard;
     }
 
-    public void setLeaderBoard(List<LeaderBoard> leaderBoard) {
+    public void setLeaderBoard(LeaderBoard leaderBoard) {
         this.leaderBoard = leaderBoard;
     }
 }

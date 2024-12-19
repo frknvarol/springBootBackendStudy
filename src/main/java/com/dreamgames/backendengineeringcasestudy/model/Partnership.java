@@ -8,7 +8,7 @@ public class Partnership {
     private long id;
 
     @Column(nullable = false)
-    private int heliumCollected;
+    private int heliumCount;
 
     @Column(nullable = false)
     private int balloonProgress;
@@ -38,12 +38,12 @@ public class Partnership {
     }
 
 
-    public int getHeliumCollected() {
-        return heliumCollected;
+    public int getHeliumCount() {
+        return heliumCount;
     }
 
-    public void setHeliumCollected(int heliumCollected) {
-        this.heliumCollected = heliumCollected;
+    public void setHeliumCount(int heliumCollected) {
+        this.heliumCount = heliumCollected;
     }
 
     public int getBalloonProgress() {

@@ -7,16 +7,14 @@ public class LeaderBoard {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long userId;
 
     @Column(nullable = false)
     private int level;
 
     @Column(nullable = false)
-    private int rank;
+    private int ranking;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -28,14 +26,6 @@ public class LeaderBoard {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
     public int getLevel() {
         return level;
     }
@@ -45,11 +35,11 @@ public class LeaderBoard {
     }
 
     public int getRank() {
-        return rank;
+        return ranking;
     }
 
     public void setRank(int rank) {
-        this.rank = rank;
+        this.ranking = rank;
     }
 
     public User getUser() {

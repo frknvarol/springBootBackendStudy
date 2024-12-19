@@ -25,7 +25,7 @@ public class Event {
     private LocalDateTime endTime;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Event> partnerships = new ArrayList<>();
+    private List<Partnership> partnerships = new ArrayList<>();
 
 
 
@@ -70,11 +70,11 @@ public class Event {
         this.endTime = endTime;
     }
 
-    public List<Event> getPartnerships() {
+    public List<Partnership> getPartnerships() {
         return partnerships;
     }
 
-    public void setPartnerships(List<Event> partnerships) {
+    public void setPartnerships(List<Partnership> partnerships) {
         this.partnerships = partnerships;
     }
 }
