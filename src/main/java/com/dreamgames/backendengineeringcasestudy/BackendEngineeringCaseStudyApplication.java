@@ -1,15 +1,10 @@
 package com.dreamgames.backendengineeringcasestudy;
-
-import com.dreamgames.backendengineeringcasestudy.model.User;
 import com.dreamgames.backendengineeringcasestudy.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.Optional;
 
 @SpringBootApplication
 public class BackendEngineeringCaseStudyApplication {
@@ -41,7 +36,7 @@ public class BackendEngineeringCaseStudyApplication {
             System.out.println("");
 
 
-            // fetch customers by username
+            // fetch customers by  username
             System.out.println("Customer found with findByLastName('frkn'):");
             System.out.println("--------------------------------------------");
             repository.findByUsername("frkn").forEach(frkn -> {

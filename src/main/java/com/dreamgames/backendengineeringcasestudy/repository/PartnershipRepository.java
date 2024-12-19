@@ -1,8 +1,10 @@
 package com.dreamgames.backendengineeringcasestudy.repository;
 import com.dreamgames.backendengineeringcasestudy.model.Partnership;
-import org.springframework.data.repository.CrudRepository;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface PartnershipRepository extends CrudRepository<Partnership, Long> {
+@Repository
+public interface PartnershipRepository extends JpaRepository<Partnership, Long> {
     Optional<Partnership> findByUser1IdOrUser2Id(Long userId1, Long userId2);
 }

@@ -7,21 +7,30 @@ import com.dreamgames.backendengineeringcasestudy.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserService {
 
+    private final UserRepository userRepository;
+
     @Autowired
-    private UserRepository userRepository;
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Autowired
     private PartnershipRepository partnershipRepository;
 
     // Method to create a new user
-    public User createUser() {
+    public User createUser(String username) {
         // Generate a unique user ID (if necessary) - depending on your DB auto-generation settings
         User newUser = new User();
+        newUser.setUsername(username);
         newUser.setLevel(1); // Default starting level
         newUser.setCoins(2000); // Starting coins
 
@@ -31,6 +40,22 @@ public class UserService {
 
         // Save the new user to the database
         return userRepository.save(newUser); // Assuming you're using JPA repository
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public Optional<User> getBookById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    public void deleteUser(Long id) {
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("User not found with id: " + id);
+        }
     }
 
     // Method to update user's progress
@@ -43,16 +68,16 @@ public class UserService {
         user.setCoins(user.getCoins() + 100);
 
         // Check if the "Pop the Balloon" event is active
-        if (isPopTheBalloonEventActive()) {
+        if (isEventActive()) {
             // Check if the user is in a partnership
             Optional<Partnership> partnershipOpt = partnershipRepository.findByUser1IdOrUser2Id(userId, userId);
 
             if (partnershipOpt.isPresent()) {
                 Partnership partnership = partnershipOpt.get();
 
-                // Increase the helium count if the user is eligible (e.g., level >= 5)
+                // Increase the helium count if the user is eligible (e.g., level >= 50)
                 if (isUserEligibleForHelium(user)) {
-                    partnership.setHeliumCount(partnership.getHeliumCount() + 1); // Increase helium count for the partnership
+                    partnership.setHeliumCount(partnership.getHeliumCount() + 10); // Increase helium count for the partnership
                     partnershipRepository.save(partnership); // Save the updated partnership
                 }
             }
@@ -63,16 +88,17 @@ public class UserService {
     }
 
     // Helper method to check if the "Pop the Balloon" event is active
-    private boolean isPopTheBalloonEventActive() {
-        // Implement the logic to check if the event is active
-        // This could involve checking a flag in the database, an external service, etc.
-        return true; // Assuming it's always active for simplicity
+    private boolean isEventActive() {
+
+        // current time in UTC
+        ZonedDateTime utcTime = ZonedDateTime.now(ZoneId.of("UTC"));
+        LocalTime currentTime = utcTime.toLocalTime();
+
+        return currentTime.isAfter(LocalTime.of(8,0)) && currentTime.isAfter(LocalTime.of(22, 0));
     }
 
-    // Helper method to check if the user is eligible for helium (e.g., depending on their level or event rules)
     private boolean isUserEligibleForHelium(User user) {
-        // Example eligibility check: user level >= 5
-        return user.getLevel() >= 5;
+        return user.getLevel() >= 50;
     }
 }
 

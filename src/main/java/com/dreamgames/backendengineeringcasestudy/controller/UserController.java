@@ -2,23 +2,30 @@ package com.dreamgames.backendengineeringcasestudy.controller;
 
 import com.dreamgames.backendengineeringcasestudy.model.User;
 import com.dreamgames.backendengineeringcasestudy.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/user")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping
-    public ResponseEntity<User> createUser() {
-        User newUser = userService.createUser();
+    public ResponseEntity<User> createUser(String username) {
+        User newUser = userService.createUser(username);
         return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+    }
+
+    @PutMapping("/{userId}/progress")
+    public ResponseEntity<User> updateUserProgress(@PathVariable Long userId) {
+        User updatedUser = userService.updateUserProgress(userId);
+        return ResponseEntity.ok(updatedUser);
     }
 }
