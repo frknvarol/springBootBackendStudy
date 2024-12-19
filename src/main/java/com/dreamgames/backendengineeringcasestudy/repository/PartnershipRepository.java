@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PartnershipRepository extends JpaRepository<Partnership, Long> {
     Optional<Partnership> findByUser1IdOrUser2Id(Long userId1, Long userId2);
+    Optional<Partnership> findByUser1IdAndUser2Id(Long userId1, Long userId2);
 }

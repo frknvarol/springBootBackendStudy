@@ -1,4 +1,4 @@
-CREATE TABLE if not exists user (
+CREATE TABLE IF NOT EXISTS user (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
     level INT NOT NULL DEFAULT 1,
@@ -7,7 +7,7 @@ CREATE TABLE if not exists user (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE if not exists event (
+CREATE TABLE IF NOT EXISTS event (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     start_time TIMESTAMP NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE if not exists event (
     ab_group CHAR(1)
 );
 
-CREATE TABLE if not exists partnership (
+CREATE TABLE IF NOT EXISTS partnership (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user1_id BIGINT NOT NULL,
     user2_id BIGINT NOT NULL,
@@ -28,7 +28,7 @@ CREATE TABLE if not exists partnership (
     FOREIGN KEY (event_id) REFERENCES event(id)
 );
 
-CREATE TABLE if not exists leaderboard (
+CREATE TABLE IF NOT EXISTS leaderboard (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL,
     level INT NOT NULL,
@@ -36,6 +36,21 @@ CREATE TABLE if not exists leaderboard (
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
 
+
+CREATE TABLE IF NOT EXISTS invitation (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    inviter_id BIGINT NOT NULL,
+    invited_id BIGINT NOT NULL,
+    event_id BIGINT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ab_group CHAR(1) NOT NULL,
+    FOREIGN KEY (inviter_id) REFERENCES user(id),
+    FOREIGN KEY (invited_id) REFERENCES user(id),
+    FOREIGN KEY (event_id) REFERENCES event(id)
+
+);
+
+/*
 CREATE INDEX idx_users_level ON user(level);
 CREATE INDEX idx_events_time ON event(start_time, end_time);
 CREATE INDEX idx_partnerships_users ON partnership(user1_id, user2_id);
@@ -48,7 +63,7 @@ INSERT INTO partnership (user1_id, user2_id, helium_collected, balloon_progress,
 
 INSERT INTO leaderboard (user_id, level, ranking) VALUES (1, 10, 1), (2, 15, 2), (3, 5, 3);
 
-
+*/
 
 
 
