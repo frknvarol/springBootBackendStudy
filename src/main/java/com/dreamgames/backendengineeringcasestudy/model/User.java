@@ -1,6 +1,9 @@
 package com.dreamgames.backendengineeringcasestudy.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.dreamgames.backendengineeringcasestudy.model.Event;
 
 @Entity
@@ -24,9 +27,14 @@ public class User {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @ManyToOne
-    @JoinColumn(name = "event_id") // Foreign key in 'users' table
-    private Event event;
+    @OneToMany(mappedBy = "user1", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Partnership> partnershipsAsUser1 = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user2", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Partnership> partnershipsAsUser2 = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LeaderBoard> leaderBoard = new ArrayList<>();
 
 
     public Long getId() {
@@ -75,5 +83,29 @@ public class User {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public List<Partnership> getPartnershipsAsUser1() {
+        return partnershipsAsUser1;
+    }
+
+    public void setPartnershipsAsUser1(List<Partnership> partnershipsAsUser1) {
+        this.partnershipsAsUser1 = partnershipsAsUser1;
+    }
+
+    public List<Partnership> getPartnershipsAsUser2() {
+        return partnershipsAsUser2;
+    }
+
+    public void setPartnershipsAsUser2(List<Partnership> partnershipsAsUser2) {
+        this.partnershipsAsUser2 = partnershipsAsUser2;
+    }
+
+    public List<LeaderBoard> getLeaderBoard() {
+        return leaderBoard;
+    }
+
+    public void setLeaderBoard(List<LeaderBoard> leaderBoard) {
+        this.leaderBoard = leaderBoard;
     }
 }

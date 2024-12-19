@@ -1,16 +1,11 @@
 package com.dreamgames.backendengineeringcasestudy.model;
 import jakarta.persistence.*;
 
+@Entity
 public class Partnership {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
-    @Column(nullable = false)
-    private long userId1;
-
-    @Column(nullable = false)
-    private long userId2;
 
     @Column(nullable = false)
     private int heliumCollected;
@@ -19,15 +14,19 @@ public class Partnership {
     private int balloonProgress;
 
     @Column(nullable = false)
-    private long eventId;
-
-    @Column(nullable = false)
     private boolean rewardClaimed;
 
+    @ManyToOne
+    @JoinColumn(name = "event_id", nullable = false)
+    private Event event;
 
     @ManyToOne
-    @JoinColumn(name = "event_id", nullable = false) // Maps the foreign key
-    private Event event; // Attribute type matches the parent entity
+    @JoinColumn(name = "user1_id", nullable = false)
+    private User user1;
+
+    @ManyToOne
+    @JoinColumn(name = "user2_id", nullable = false)
+    private User user2;
 
 
     public long getId() {
@@ -38,21 +37,6 @@ public class Partnership {
         this.id = id;
     }
 
-    public long getUserId1() {
-        return userId1;
-    }
-
-    public void setUserId1(long userId1) {
-        this.userId1 = userId1;
-    }
-
-    public long getUserId2() {
-        return userId2;
-    }
-
-    public void setUserId2(long userId2) {
-        this.userId2 = userId2;
-    }
 
     public int getHeliumCollected() {
         return heliumCollected;
@@ -70,19 +54,35 @@ public class Partnership {
         this.balloonProgress = balloonProgress;
     }
 
-    public long getEventId() {
-        return eventId;
-    }
-
-    public void setEventId(long eventId) {
-        this.eventId = eventId;
-    }
-
     public boolean isRewardClaimed() {
         return rewardClaimed;
     }
 
     public void setRewardClaimed(boolean rewardClaimed) {
         this.rewardClaimed = rewardClaimed;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
+
+    public User getUser1() {
+        return user1;
+    }
+
+    public void setUser1(User user1) {
+        this.user1 = user1;
+    }
+
+    public User getUser2() {
+        return user2;
+    }
+
+    public void setUser2(User user2) {
+        this.user2 = user2;
     }
 }

@@ -1,8 +1,11 @@
 package com.dreamgames.backendengineeringcasestudy.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+@Entity
 public class Event {
 
     @Id
@@ -22,7 +25,8 @@ public class Event {
     private LocalDateTime endTime;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Partnership> partnerships;
+    private List<Event> partnerships = new ArrayList<>();
+
 
 
 
@@ -64,5 +68,13 @@ public class Event {
 
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
+    }
+
+    public List<Event> getPartnerships() {
+        return partnerships;
+    }
+
+    public void setPartnerships(List<Event> partnerships) {
+        this.partnerships = partnerships;
     }
 }

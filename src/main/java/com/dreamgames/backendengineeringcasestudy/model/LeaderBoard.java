@@ -1,6 +1,7 @@
 package com.dreamgames.backendengineeringcasestudy.model;
 import jakarta.persistence.*;
 
+@Entity
 public class LeaderBoard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,6 +15,10 @@ public class LeaderBoard {
 
     @Column(nullable = false)
     private int rank;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     public Long getId() {
         return id;
@@ -45,5 +50,13 @@ public class LeaderBoard {
 
     public void setRank(int rank) {
         this.rank = rank;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
