@@ -87,6 +87,12 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    private Character getABGroup(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+
+        return user.getAbGroup();
+    }
+
     // Helper method to check if the "Pop the Balloon" event is active
     private boolean isEventActive() {
 
