@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface InvitationRepository extends JpaRepository<Invitation, Long> {
-    boolean existsByInviterIdAndInvitedIdAndEvent(User inviter, User invitee, Event event);
+    boolean existsByInviterIdAndInvitedIdAndEvent(User inviterUser, User invitedUser, Event event);
 }

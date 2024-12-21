@@ -1,11 +1,19 @@
 package com.dreamgames.backendengineeringcasestudy;
+import com.dreamgames.backendengineeringcasestudy.model.Event;
+import com.dreamgames.backendengineeringcasestudy.model.Invitation;
+import com.dreamgames.backendengineeringcasestudy.repository.InvitationRepository;
 import com.dreamgames.backendengineeringcasestudy.repository.UserRepository;
 import com.dreamgames.backendengineeringcasestudy.service.EventService;
+import com.dreamgames.backendengineeringcasestudy.service.InvitationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 
 @SpringBootApplication
@@ -19,15 +27,16 @@ public class BackendEngineeringCaseStudyApplication {
         System.out.println("**********************************************************************");
     }
 
+            /*
     @Bean
     public CommandLineRunner demo(UserRepository repository) {
         return (args) -> {
             // save a few users
-            //repository.save(new User("frkn", 'A'));
-            //repository.save(new User("ahmet21", 'B'));
-            //repository.save(new User("tuana48", 'A'));
-            //repository.save(new User("fatih619", 'A'));
-            //repository.save(new User("GrImEs", 'B'));
+            repository.save(new User("frkn", 'A'));
+            repository.save(new User("ahmet21", 'B'));
+            repository.save(new User("tuana48", 'A'));
+            repository.save(new User("fatih619", 'A'));
+            repository.save(new User("GrImEs", 'B'));
 
             // fetch all users
             System.out.println("Users found with findAll():");
@@ -45,6 +54,32 @@ public class BackendEngineeringCaseStudyApplication {
                 System.out.println(frkn.toString());
             });
             System.out.println("");
+
+
+
         };
+
+
+    }
+            */
+
+    @Bean
+    public CommandLineRunner demo(InvitationService invitationService, EventService eventService, UserRepository userRepository) {
+        return (args) -> {
+
+            Event currentEvent = eventService.getActiveEvent().orElseThrow(()-> new RuntimeException("no active event"));
+
+            invitationService.invitePartner(1L, 3L, currentEvent);
+
+            System.out.println(currentEvent.getStartTime());
+            System.out.println(currentEvent.getEndTime());
+            System.out.println(currentEvent.getName());
+            System.out.println(eventService.isEventActive(currentEvent));
+
+
+
+        };
+
+
     }
 }
