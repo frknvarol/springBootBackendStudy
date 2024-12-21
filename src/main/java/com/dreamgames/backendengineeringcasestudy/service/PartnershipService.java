@@ -23,6 +23,12 @@ public class PartnershipService {
 
 
     public void createPartnership(User inviter, User invited, Event event) {
+
+        boolean partnershipExists = partnershipRepository.existsByUser1AndUser2AndEvent(inviter, invited, event);
+        if (partnershipExists) {
+            throw new RuntimeException("Partnership already exists between these users for this event");
+        }
+
         Partnership newPartnership = new Partnership();
 
         newPartnership.setUser1(inviter);

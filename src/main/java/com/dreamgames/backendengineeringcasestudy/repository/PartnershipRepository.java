@@ -1,6 +1,11 @@
 package com.dreamgames.backendengineeringcasestudy.repository;
+import com.dreamgames.backendengineeringcasestudy.model.Event;
 import com.dreamgames.backendengineeringcasestudy.model.Partnership;
+
+import java.util.List;
 import java.util.Optional;
+
+import com.dreamgames.backendengineeringcasestudy.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,4 +21,8 @@ public interface PartnershipRepository extends JpaRepository<Partnership, Long> 
             "WHERE (p.user1.id = :userId OR p.user2.id = :userId) " +
             "AND p.event.id = :eventId")
     boolean existsByUserIdAndEventId(@Param("userId") Long userId, @Param("eventId") Long eventId);
+
+    boolean existsByUser1AndUser2AndEvent(User user1, User user2, Event event);
+
+
 }

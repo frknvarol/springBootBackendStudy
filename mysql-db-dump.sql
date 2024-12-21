@@ -44,11 +44,15 @@ CREATE TABLE IF NOT EXISTS invitation (
     event_id BIGINT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     ab_group CHAR(1) NOT NULL,
+    status ENUM('PENDING', 'ACCEPTED', 'REJECTED', 'DEPRECATED') DEFAULT 'PENDING',
     FOREIGN KEY (inviter_id) REFERENCES user(id),
     FOREIGN KEY (invited_id) REFERENCES user(id),
     FOREIGN KEY (event_id) REFERENCES event(id)
 
 );
+
+
+
 
 /*
 CREATE INDEX idx_users_level ON user(level);

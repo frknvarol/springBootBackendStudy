@@ -19,26 +19,30 @@ public class Invitation {
 
     @ManyToOne
     @JoinColumn(name = "inviter_id", nullable = false)
-    private User inviterId;
+    private User inviterUser;
 
     @ManyToOne
     @JoinColumn(name = "invited_id", nullable = false)
-    private User invitedId;
+    private User invitedUser;
 
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
-    @Column(nullable = false)
-    private boolean valid;
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.PENDING;
+
+    public enum Status {
+        PENDING, ACCEPTED, REJECTED, DEPRECATED
+    }
 
 
     public Invitation() {
     }
 
-    public Invitation(User inviterId, User invitedId, Event event) {
-        this.inviterId = inviterId;
-        this.invitedId = invitedId;
+    public Invitation(User inviterUser, User invitedUser, Event event) {
+        this.inviterUser = inviterUser;
+        this.invitedUser = invitedUser;
         this.event = event;
     }
 
@@ -66,20 +70,20 @@ public class Invitation {
         this.createdAt = createdAt;
     }
 
-    public User getInviterId() {
-        return inviterId;
+    public User getInviterUser() {
+        return inviterUser;
     }
 
-    public void setInviterId(User inviterId) {
-        this.inviterId = inviterId;
+    public void setInviterUser(User inviterId) {
+        this.inviterUser = inviterId;
     }
 
-    public User getInvitedId() {
-        return invitedId;
+    public User getInvitedUser() {
+        return invitedUser;
     }
 
-    public void setInvitedId(User invitedId) {
-        this.invitedId = invitedId;
+    public void setInvitedUser(User invitedId) {
+        this.invitedUser = invitedId;
     }
 
     public Event getEvent() {
@@ -90,11 +94,11 @@ public class Invitation {
         this.event = event;
     }
 
-    public boolean isValid() {
-        return valid;
+    public Status getStatus() {
+        return status;
     }
 
-    public void setValid(boolean valid) {
-        this.valid = valid;
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }

@@ -34,10 +34,10 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private LeaderBoard leaderBoard;
 
-    @OneToMany(mappedBy = "inviterId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "inviterUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Invitation> sentInvitations = new ArrayList<>();
 
-    @OneToMany(mappedBy = "invitedId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "invitedUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Invitation> recievedInvitations = new ArrayList<>();
 
 

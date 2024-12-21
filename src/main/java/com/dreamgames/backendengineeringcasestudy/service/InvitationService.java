@@ -9,6 +9,11 @@ import com.dreamgames.backendengineeringcasestudy.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
+import static com.dreamgames.backendengineeringcasestudy.model.Invitation.Status.ACCEPTED;
+import static com.dreamgames.backendengineeringcasestudy.model.Invitation.Status.DEPRECATED;
+
 @Service
 public class InvitationService {
 
@@ -59,11 +64,11 @@ public class InvitationService {
 
         Invitation newInvitation = new Invitation();
 
-        newInvitation.setInvitedId(invited);
-        newInvitation.setInviterId(inviter);
+        newInvitation.setInvitedUser(invited);
+        newInvitation.setInviterUser(inviter);
         newInvitation.setEvent(activeEvent);
         newInvitation.setAbGroup(inviter.getAbGroup());
-        newInvitation.setValid(true);
+        newInvitation.setStatus(ACCEPTED);
         invitationRepository.save(newInvitation);
 
     }
@@ -72,16 +77,23 @@ public class InvitationService {
         Invitation invitation = invitationRepository.findById(invitationId).orElseThrow(() -> new RuntimeException("No such invitation"));
 
         if (!eventService.isEventActive(event)) {
-            invitation.setValid(false);
+            invitation.setStatus(DEPRECATED);
+            invitationRepository.save(invitation);
             throw new RuntimeException("Event is not active");
         }
 
-        Long invitedId = invitation.getInvitedId().getId();
+        Long invitedId = invitation.getInvitedUser().getId();
+
 
         User inviter = userRepository.findById(inviterId).orElseThrow(() -> new RuntimeException("No inviter with ID: " + inviterId));
-        User invited = userRepository.findById(invitedId).orElseThrow(() -> new RuntimeException("No inviter with ID: " + invitedId));
+        User invited = userRepository.findById(invitedId).orElseThrow(() -> new RuntimeException("No invited user with ID: " + invitedId));
+
 
         partnershipService.createPartnership(inviter, invited, event);
 
+    }
+
+    public List<Invitation> findInvitationsForUser(User user) {
+        return invitationRepository.findInvitationByInviterUserOrInvitedUser(user);
     }
 }
