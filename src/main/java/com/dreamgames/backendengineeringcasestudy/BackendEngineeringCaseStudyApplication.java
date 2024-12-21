@@ -1,10 +1,12 @@
 package com.dreamgames.backendengineeringcasestudy;
 import com.dreamgames.backendengineeringcasestudy.model.Event;
 import com.dreamgames.backendengineeringcasestudy.model.Invitation;
+import com.dreamgames.backendengineeringcasestudy.model.User;
 import com.dreamgames.backendengineeringcasestudy.repository.InvitationRepository;
 import com.dreamgames.backendengineeringcasestudy.repository.UserRepository;
 import com.dreamgames.backendengineeringcasestudy.service.EventService;
 import com.dreamgames.backendengineeringcasestudy.service.InvitationService;
+import com.dreamgames.backendengineeringcasestudy.service.PartnershipService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -69,13 +71,15 @@ public class BackendEngineeringCaseStudyApplication {
 
             Event currentEvent = eventService.getActiveEvent().orElseThrow(()-> new RuntimeException("no active event"));
 
-            invitationService.invitePartner(1L, 3L, currentEvent);
+            //invitationService.invitePartner(1L, 3L, currentEvent);
 
             System.out.println(currentEvent.getStartTime());
             System.out.println(currentEvent.getEndTime());
             System.out.println(currentEvent.getName());
             System.out.println(eventService.isEventActive(currentEvent));
 
+
+            invitationService.acceptInvitation(1L, 1L, currentEvent);
 
 
         };

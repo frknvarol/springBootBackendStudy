@@ -1,13 +1,12 @@
 package com.dreamgames.backendengineeringcasestudy.service;
-
 import com.dreamgames.backendengineeringcasestudy.model.Event;
 import com.dreamgames.backendengineeringcasestudy.model.Partnership;
+import com.dreamgames.backendengineeringcasestudy.model.User;
 import com.dreamgames.backendengineeringcasestudy.repository.PartnershipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
-import java.util.Optional;
+
 
 @Service
 public class PartnershipService {
@@ -21,6 +20,17 @@ public class PartnershipService {
 
     @Autowired
     private PartnershipRepository partnershipRepository;
+
+
+    public void createPartnership(User inviter, User invited, Event event) {
+        Partnership newPartnership = new Partnership();
+
+        newPartnership.setUser1(inviter);
+        newPartnership.setUser2(invited);
+        newPartnership.setEvent(event);
+
+        partnershipRepository.save(newPartnership);
+    }
 
 
 

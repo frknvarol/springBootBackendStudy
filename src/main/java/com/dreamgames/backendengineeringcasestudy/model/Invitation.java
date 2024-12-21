@@ -29,6 +29,10 @@ public class Invitation {
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
+    @Column(nullable = false)
+    private boolean valid;
+
+
     public Invitation() {
     }
 
@@ -84,5 +88,13 @@ public class Invitation {
 
     public void setEvent(Event event) {
         this.event = event;
+    }
+
+    public boolean isValid() {
+        return valid;
+    }
+
+    public void setValid(boolean valid) {
+        this.valid = valid;
     }
 }
