@@ -2,6 +2,7 @@ package com.dreamgames.backendengineeringcasestudy.service;
 
 import com.dreamgames.backendengineeringcasestudy.model.Partnership;
 import com.dreamgames.backendengineeringcasestudy.model.User;
+import com.dreamgames.backendengineeringcasestudy.repository.EventRepository;
 import com.dreamgames.backendengineeringcasestudy.repository.PartnershipRepository;
 import com.dreamgames.backendengineeringcasestudy.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +18,17 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PartnershipRepository partnershipRepository;
+    private final EventService eventService;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PartnershipRepository partnershipRepository, EventService eventService) {
         this.userRepository = userRepository;
+        this.eventService = eventService;
+        this.partnershipRepository = partnershipRepository;
+
     }
 
-    @Autowired
-    private PartnershipRepository partnershipRepository;
 
     // Method to create a new user
     public User createUser(String username) {
@@ -46,7 +50,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Optional<User> getBookById(Long id) {
+    public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
 
@@ -68,7 +72,7 @@ public class UserService {
         user.setCoins(user.getCoins() + 100);
 
         // Check if the "Pop the Balloon" event is active
-        if (isEventActive()) {
+        if (eventService.isEventActive(eventService.getActiveEvent().orElseThrow(() -> new RuntimeException("no active event")))) {
             // Check if the user is in a partnership
             Optional<Partnership> partnershipOpt = partnershipRepository.findByUser1IdOrUser2Id(userId, userId);
 
@@ -93,15 +97,10 @@ public class UserService {
         return user.getAbGroup();
     }
 
-    // Helper method to check if the "Pop the Balloon" event is active
-    private boolean isEventActive() {
-
-        // current time in UTC
-        ZonedDateTime utcTime = ZonedDateTime.now(ZoneId.of("UTC"));
-        LocalTime currentTime = utcTime.toLocalTime();
-
-        return currentTime.isAfter(LocalTime.of(8,0)) && currentTime.isAfter(LocalTime.of(22, 0));
+    private List<User> getRandomPlayerFromSameGroup(Character abGroup) {
+        return userRepository.findRandomPlayerFromSameGroup(abGroup);
     }
+
 
     private boolean isUserEligibleForHelium(User user) {
         return user.getLevel() >= 50;

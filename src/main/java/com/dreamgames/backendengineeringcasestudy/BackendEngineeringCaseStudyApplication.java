@@ -7,6 +7,7 @@ import com.dreamgames.backendengineeringcasestudy.repository.UserRepository;
 import com.dreamgames.backendengineeringcasestudy.service.EventService;
 import com.dreamgames.backendengineeringcasestudy.service.InvitationService;
 import com.dreamgames.backendengineeringcasestudy.service.PartnershipService;
+import com.dreamgames.backendengineeringcasestudy.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -68,10 +69,10 @@ public class BackendEngineeringCaseStudyApplication {
             */
 
     @Bean
-    public CommandLineRunner demo(InvitationService invitationService, EventService eventService, UserRepository userRepository) {
+    public CommandLineRunner demo(InvitationService invitationService, EventService eventService, UserRepository userRepository, UserService userService) {
         return (args) -> {
 
-            Event currentEvent = eventService.getActiveEvent().orElseThrow(()-> new RuntimeException("no active event"));
+            //Event currentEvent = eventService.getActiveEvent().orElseThrow(()-> new RuntimeException("no active event"));
 
             //invitationService.invitePartner(1L, 3L, currentEvent);
             //invitationService.invitePartner(1L, 2L, currentEvent);
@@ -88,12 +89,14 @@ public class BackendEngineeringCaseStudyApplication {
             //invitationService.acceptInvitation(1L, 6L, currentEvent);
 
             //invitationService.rejectInvitation(9L);
-            invitationService.acceptInvitation(3L, 31L, currentEvent);
+            //invitationService.acceptInvitation(3L, 31L, currentEvent);
 
 
             //User user = userRepository.findById(3L).orElseThrow(() -> new RuntimeException("no such user"));
 
             //System.out.println(invitationService.findInvitationsForUser(user, user).toString());
+
+            System.out.println(userRepository.findRandomPlayerFromSameGroup('A'));
 
         };
 
