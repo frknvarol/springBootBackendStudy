@@ -90,7 +90,6 @@ public class InvitationService {
         // Deprecate all other invitations for both inviter and invited users
         List<Invitation> otherInvitations = invitationRepository.findAllByInviterUserOrInvitedUser(inviter, invited);
         for (Invitation otherInvitation : otherInvitations ) {
-            System.out.println();
             if (!otherInvitation.getId().equals(invitationId) && otherInvitation.getStatus() == PENDING) {
                 otherInvitation.setStatus(DEPRECATED);
             }
@@ -130,6 +129,10 @@ public class InvitationService {
         // Save the updated invitation
         invitationRepository.save(invitation);
 
+    }
+
+    public List<Invitation> getAllInvitations() {
+        return invitationRepository.findAll();
     }
 
     public List<Invitation> findInvitationsForUser(User user1, User user2) {

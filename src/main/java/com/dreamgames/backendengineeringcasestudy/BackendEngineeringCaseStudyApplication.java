@@ -96,7 +96,7 @@ public class BackendEngineeringCaseStudyApplication {
 
             //System.out.println(invitationService.findInvitationsForUser(user, user).toString());
 
-            System.out.println(userRepository.findRandomPlayerFromSameGroup('A'));
+            //System.out.println(userRepository.findRandomPlayerFromSameGroup('A'));
 
         };
 
