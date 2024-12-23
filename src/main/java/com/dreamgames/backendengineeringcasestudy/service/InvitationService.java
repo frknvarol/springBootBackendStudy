@@ -20,20 +20,24 @@ public class InvitationService {
 
     private final PartnershipService partnershipService;
 
+    private final UserService userService;
+
+    private final UserRepository userRepository;
+
+    private final InvitationRepository invitationRepository;
+
+
     @Autowired
-    public InvitationService(EventService eventService, PartnershipService partnershipService){
+    public InvitationService(EventService eventService, PartnershipService partnershipService, UserService userService, UserRepository userRepository, InvitationRepository invitationRepository){
         this.eventService = eventService;
         this.partnershipService = partnershipService;
+        this.userService = userService;
+        this.userRepository = userRepository;
+        this.invitationRepository = invitationRepository;
     }
 
-    @Autowired
-    private UserRepository userRepository;
 
-    @Autowired
-    private InvitationRepository invitationRepository;
 
-    @Autowired
-    private PartnershipRepository partnershipRepository;
 
     public void invitePartner(Long inviterId, Long invitedId, Event event) {
         if (!eventService.isEventActive(event)) {
@@ -49,12 +53,12 @@ public class InvitationService {
             throw new RuntimeException("Both users must be at least level 50 to participate");
         }
 
-        if(partnershipService.hasPartner(inviterId)) {
-            throw new RuntimeException("User with ID " + inviterId + "Already has a partner in the active event");
+        if(userService.hasPartner(inviterId)) {
+            throw new RuntimeException("User with ID " + inviterId + " Already has a partner in the active event");
         }
 
-        if(partnershipService.hasPartner(invitedId)) {
-            throw new RuntimeException("User with ID " + invitedId + "Already has a partner in the active event");
+        if(userService.hasPartner(invitedId)) {
+            throw new RuntimeException("User with ID " + invitedId + " Already has a partner in the active event");
         }
 
         if(!inviter.getAbGroup().equals(invited.getAbGroup())) {

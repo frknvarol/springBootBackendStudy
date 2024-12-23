@@ -91,6 +91,10 @@ public class BackendEngineeringCaseStudyApplication {
             //invitationService.rejectInvitation(9L);
             //invitationService.acceptInvitation(3L, 31L, currentEvent);
 
+            userService.updateUserProgress(1L);
+            userService.updateUserProgress(1L);
+            userService.updateUserProgress(3L);
+
 
             //User user = userRepository.findById(3L).orElseThrow(() -> new RuntimeException("no such user"));
 

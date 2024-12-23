@@ -68,4 +68,3 @@ INSERT INTO leaderboard (user_id, level, ranking) VALUES (1, 10, 1), (2, 15, 2),
 
 */
 
-

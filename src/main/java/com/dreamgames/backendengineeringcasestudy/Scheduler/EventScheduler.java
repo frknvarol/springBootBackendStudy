@@ -30,7 +30,7 @@ public class EventScheduler {
         this.invitationRepository = invitationRepository;
     }
 
-    @Scheduled(cron = "0 26 22 * * ?", zone = "UTC") // At 08:00 UTC daily
+    @Scheduled(cron = "0 0 8 * * ?", zone = "UTC") // At 08:00 UTC daily
     public void createEvent() {
         Event newEvent = new Event();
         newEvent.setName("Event");
@@ -40,7 +40,7 @@ public class EventScheduler {
         eventRepository.save(newEvent);
     }
 
-    @Scheduled(cron = "0 47 22 * * ?", zone = "UTC") // At 22:00 UTC daily
+    @Scheduled(cron = "0 0 22 * * ?", zone = "UTC") // At 22:00 UTC daily
     @Transactional
     public void deprecateInactiveInvitations() {
 

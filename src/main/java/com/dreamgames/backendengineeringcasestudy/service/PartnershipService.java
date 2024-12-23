@@ -13,13 +13,13 @@ public class PartnershipService {
 
     private final EventService eventService;
 
-    @Autowired
-    public PartnershipService(EventService eventService) {
-        this.eventService = eventService;
-    }
+    private final PartnershipRepository partnershipRepository;
 
     @Autowired
-    private PartnershipRepository partnershipRepository;
+    public PartnershipService(EventService eventService, PartnershipRepository partnershipRepository) {
+        this.eventService = eventService;
+        this.partnershipRepository = partnershipRepository;
+    }
 
 
     public void createPartnership(User inviter, User invited, Event event) {
@@ -33,18 +33,12 @@ public class PartnershipService {
 
         newPartnership.setUser1(inviter);
         newPartnership.setUser2(invited);
-        newPartnership.setEvent(event);
+        newPartnership.setEvent(eventService.getActiveEvent().orElseThrow(() -> new RuntimeException("no active event")));
 
         partnershipRepository.save(newPartnership);
     }
 
 
 
-    public boolean hasPartner(Long userId) {
-        Long activeEventId = eventService.getActiveEvent()
-                .orElseThrow(() -> new RuntimeException("No active event"))
-                .getId();
 
-        return partnershipRepository.existsByUserIdAndEventId(userId, activeEventId);
-    }
 }

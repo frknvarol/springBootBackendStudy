@@ -16,6 +16,9 @@ public class Partnership {
     @Column(nullable = false)
     private boolean rewardClaimed;
 
+    @Column(nullable = false)
+    private boolean active;
+
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
@@ -84,5 +87,13 @@ public class Partnership {
 
     public void setUser2(User user2) {
         this.user2 = user2;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

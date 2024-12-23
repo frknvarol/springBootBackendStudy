@@ -1,5 +1,6 @@
 package com.dreamgames.backendengineeringcasestudy.service;
 
+import com.dreamgames.backendengineeringcasestudy.model.Event;
 import com.dreamgames.backendengineeringcasestudy.model.Partnership;
 import com.dreamgames.backendengineeringcasestudy.model.User;
 import com.dreamgames.backendengineeringcasestudy.repository.EventRepository;
@@ -71,20 +72,18 @@ public class UserService {
         user.setLevel(user.getLevel() + 1);
         user.setCoins(user.getCoins() + 100);
 
+
         // Check if the "Pop the Balloon" event is active
         if (eventService.isEventActive(eventService.getActiveEvent().orElseThrow(() -> new RuntimeException("no active event")))) {
             // Check if the user is in a partnership
-            Optional<Partnership> partnershipOpt = partnershipRepository.findByUser1IdOrUser2Id(userId, userId);
+            Long currentEventId = eventService.getActiveEvent().orElseThrow(() -> new RuntimeException("no active event")).getId();
+            Partnership partnership = partnershipRepository.findByUserIdAndEventId(userId, currentEventId);
 
-            if (partnershipOpt.isPresent()) {
-                Partnership partnership = partnershipOpt.get();
 
-                // Increase the helium count if the user is eligible (e.g., level >= 50)
-                if (isUserEligibleForHelium(user)) {
-                    partnership.setHeliumCount(partnership.getHeliumCount() + 10); // Increase helium count for the partnership
-                    partnershipRepository.save(partnership); // Save the updated partnership
-                }
-            }
+            partnership.setHeliumCount(partnership.getHeliumCount() + 10); // Increase helium count for the partnership
+            partnershipRepository.save(partnership); // Save the updated partnership
+
+
         }
 
         // Save the updated user data
@@ -99,6 +98,14 @@ public class UserService {
 
     private List<User> getRandomPlayerFromSameGroup(Character abGroup) {
         return userRepository.findRandomPlayerFromSameGroup(abGroup);
+    }
+
+    public boolean hasPartner(Long userId) {
+        Long activeEventId = eventService.getActiveEvent()
+                .orElseThrow(() -> new RuntimeException("No active event"))
+                .getId();
+
+        return partnershipRepository.existsByUserIdAndEventId(userId, activeEventId);
     }
 
 
