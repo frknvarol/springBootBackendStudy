@@ -1,3 +1,4 @@
+/*
 CREATE TABLE IF NOT EXISTS user (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
@@ -11,8 +12,7 @@ CREATE TABLE IF NOT EXISTS event (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     start_time TIMESTAMP NOT NULL,
-    end_time TIMESTAMP NOT NULL,
-    ab_group CHAR(1)
+    end_time TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS partnership (
@@ -54,7 +54,6 @@ CREATE TABLE IF NOT EXISTS invitation (
 
 
 
-/*
 CREATE INDEX idx_users_level ON user(level);
 CREATE INDEX idx_events_time ON event(start_time, end_time);
 CREATE INDEX idx_partnerships_users ON partnership(user1_id, user2_id);
@@ -68,7 +67,5 @@ INSERT INTO partnership (user1_id, user2_id, helium_collected, balloon_progress,
 INSERT INTO leaderboard (user_id, level, ranking) VALUES (1, 10, 1), (2, 15, 2), (3, 5, 3);
 
 */
-
-
 
 

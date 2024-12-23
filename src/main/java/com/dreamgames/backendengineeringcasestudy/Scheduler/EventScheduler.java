@@ -17,11 +17,9 @@ public class EventScheduler {
         this.eventRepository = eventRepository;
     }
 
-    //@Scheduled(cron = "0 0 8 * * ?", zone = "UTC") // At 08:00 UTC daily
-    @Scheduled(fixedRate = 1000)
+    @Scheduled(cron = "0 0 8 * * ?", zone = "UTC") // At 08:00 UTC daily
     public void endEvent() {
         Event newEvent = new Event();
-        newEvent.setAbGroup('A');
         newEvent.setName("Event");
         newEvent.setStartTime(LocalDateTime.now());
         newEvent.setEndTime(LocalDateTime.now().plusHours(14));

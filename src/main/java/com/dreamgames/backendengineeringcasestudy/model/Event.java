@@ -16,9 +16,6 @@ public class Event {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, length = 1)
-    private Character abGroup;
-
     @Column(nullable = false)
     private LocalDateTime startTime;
 
@@ -48,14 +45,6 @@ public class Event {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Character getAbGroup() {
-        return abGroup;
-    }
-
-    public void setAbGroup(Character abGroup) {
-        this.abGroup = abGroup;
     }
 
     public LocalDateTime getStartTime() {

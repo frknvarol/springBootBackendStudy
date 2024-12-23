@@ -11,8 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.dreamgames.backendengineeringcasestudy.model.Invitation.Status.ACCEPTED;
-import static com.dreamgames.backendengineeringcasestudy.model.Invitation.Status.DEPRECATED;
+import static com.dreamgames.backendengineeringcasestudy.model.Invitation.Status.*;
 
 @Service
 public class InvitationService {
@@ -68,7 +67,7 @@ public class InvitationService {
         newInvitation.setInviterUser(inviter);
         newInvitation.setEvent(activeEvent);
         newInvitation.setAbGroup(inviter.getAbGroup());
-        newInvitation.setStatus(ACCEPTED);
+        newInvitation.setStatus(PENDING);
         invitationRepository.save(newInvitation);
 
     }
@@ -88,8 +87,48 @@ public class InvitationService {
         User inviter = userRepository.findById(inviterId).orElseThrow(() -> new RuntimeException("No inviter with ID: " + inviterId));
         User invited = userRepository.findById(invitedId).orElseThrow(() -> new RuntimeException("No invited user with ID: " + invitedId));
 
+        // Deprecate all other invitations for both inviter and invited users
+        List<Invitation> otherInvitations = invitationRepository.findAllByInviterUserOrInvitedUser(inviter, invited);
+        for (Invitation otherInvitation : otherInvitations ) {
+            System.out.println();
+            if (!otherInvitation.getId().equals(invitationId) && otherInvitation.getStatus() == PENDING) {
+                otherInvitation.setStatus(DEPRECATED);
+            }
+        }
+        invitationRepository.saveAll(otherInvitations);
+
 
         partnershipService.createPartnership(inviter, invited, event);
+
+        invitation.setStatus(ACCEPTED);
+        invitationRepository.save(invitation);
+
+    }
+
+    public void rejectInvitation (Long invitationId) {
+
+        // Retrieve the invitation by its ID
+        Invitation invitation = invitationRepository.findById(invitationId)
+                .orElseThrow(() -> new RuntimeException("No invitation found with ID: " + invitationId));
+
+        // Check the current status of the invitation
+        if (invitation.getStatus() == REJECTED) {
+            throw new RuntimeException("Invitation is already rejected");
+        }
+
+        else if (invitation.getStatus() == DEPRECATED) {
+            throw new RuntimeException("Invitation is deprecated");
+        }
+
+        else if (invitation.getStatus() == ACCEPTED) {
+            throw new RuntimeException("Invitation is accepted");
+        }
+
+        // Update the status to REJECTED
+        invitation.setStatus(REJECTED);
+
+        // Save the updated invitation
+        invitationRepository.save(invitation);
 
     }
 
