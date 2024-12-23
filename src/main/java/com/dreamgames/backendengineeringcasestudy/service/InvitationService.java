@@ -93,7 +93,7 @@ public class InvitationService {
 
     }
 
-    public List<Invitation> findInvitationsForUser(User user) {
-        return invitationRepository.findInvitationByInviterUserOrInvitedUser(user);
+    public List<Invitation> findInvitationsForUser(User user1, User user2) {
+        return invitationRepository.findInvitationByInviterUserOrInvitedUser(user1, user2);
     }
 }

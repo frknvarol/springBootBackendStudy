@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface InvitationRepository extends JpaRepository<Invitation, Long> {
-    boolean existsByInviterIdAndInvitedIdAndEvent(User inviterUser, User invitedUser, Event event);
+    //boolean existsByInviterIdAndInvitedIdAndEvent(User inviterUser, User invitedUser, Event event);
 
-    List<Invitation> findInvitationByInviterUserOrInvitedUser(User user);
+    List<Invitation> findInvitationByInviterUserOrInvitedUser(User inviterUser, User invitedUser);
 }

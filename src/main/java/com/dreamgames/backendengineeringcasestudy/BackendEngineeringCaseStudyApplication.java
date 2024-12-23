@@ -12,6 +12,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -19,6 +20,7 @@ import java.time.ZonedDateTime;
 
 
 @SpringBootApplication
+@EnableScheduling
 public class BackendEngineeringCaseStudyApplication {
 
     public static void main(String[] args) {
@@ -69,18 +71,22 @@ public class BackendEngineeringCaseStudyApplication {
     public CommandLineRunner demo(InvitationService invitationService, EventService eventService, UserRepository userRepository) {
         return (args) -> {
 
-            Event currentEvent = eventService.getActiveEvent().orElseThrow(()-> new RuntimeException("no active event"));
+            //Event currentEvent = eventService.getActiveEvent().orElseThrow(()-> new RuntimeException("no active event"));
 
             //invitationService.invitePartner(1L, 3L, currentEvent);
 
+            /*
             System.out.println(currentEvent.getStartTime());
             System.out.println(currentEvent.getEndTime());
             System.out.println(currentEvent.getName());
             System.out.println(eventService.isEventActive(currentEvent));
+            */
 
+            //invitationService.acceptInvitation(1L, 1L, currentEvent);
 
-            invitationService.acceptInvitation(1L, 1L, currentEvent);
+            User user = userRepository.findById(3L).orElseThrow(() -> new RuntimeException("no such user"));
 
+            System.out.println(invitationService.findInvitationsForUser(user, user).toString());
 
         };
 
