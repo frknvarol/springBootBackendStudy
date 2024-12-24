@@ -142,4 +142,8 @@ public class InvitationService {
     public List<Invitation> findInvitationsForUser(User user1, User user2) {
         return invitationRepository.findInvitationByInviterUserOrInvitedUser(user1, user2);
     }
+
+    public List<Invitation> getReceivedInvitations(User user, Event event) {
+        return invitationRepository.findReceivedInvitationByUserAndEvent(user, event, Invitation.Status.PENDING);
+    }
 }

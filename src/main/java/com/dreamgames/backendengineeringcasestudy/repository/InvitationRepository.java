@@ -26,4 +26,7 @@ public interface InvitationRepository extends JpaRepository<Invitation, Long> {
 
 
     List<Invitation> findInvitationByInviterUserOrInvitedUser(User inviterUser, User invitedUser);
+
+    @Query("SELECT i FROM Invitation i WHERE i.invitedUser = :user AND i.event = :event AND i.status = :status")
+    List<Invitation> findReceivedInvitationByUserAndEvent(@Param("user") User user, @Param("event") Event event, @Param("status") Invitation.Status status);
 }
