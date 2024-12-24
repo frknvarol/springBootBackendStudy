@@ -72,7 +72,7 @@ public class BackendEngineeringCaseStudyApplication {
     public CommandLineRunner demo(InvitationService invitationService, EventService eventService, UserRepository userRepository, UserService userService) {
         return (args) -> {
 
-            Event currentEvent = eventService.getActiveEvent().orElseThrow(()-> new RuntimeException("no active event"));
+            //Event currentEvent = eventService.getActiveEvent().orElseThrow(()-> new RuntimeException("no active event"));
 
             //invitationService.invitePartner(1L, 3L, currentEvent);
             //invitationService.invitePartner(1L, 2L, currentEvent);
@@ -93,10 +93,15 @@ public class BackendEngineeringCaseStudyApplication {
 
             //userService.updateUserProgress(1L);
 
-            //invitationService.invitePartner(3L, 2L, currentEvent);
-            User user = userRepository.findById(2L).orElseThrow(() -> new RuntimeException("no such user"));
+            //invitationService.invitePartner(3L, 1L, currentEvent);
+            //invitationService.invitePartner(1L, 3L, currentEvent);
+            User user3 = userRepository.findById(3L).orElseThrow(() -> new RuntimeException("no such user"));
+            User user2 = userRepository.findById(2L).orElseThrow(() -> new RuntimeException("no such user"));
 
-            System.out.println(invitationService.getReceivedInvitations(user, currentEvent));
+            //System.out.println(invitationService.getReceivedInvitations(user, currentEvent));
+            System.out.println(invitationService.getSentInvitations(user3));
+            System.out.println("-------");
+            System.out.println(invitationService.getReceivedInvitations(user3));
 
 
             //User user = userRepository.findById(3L).orElseThrow(() -> new RuntimeException("no such user"));

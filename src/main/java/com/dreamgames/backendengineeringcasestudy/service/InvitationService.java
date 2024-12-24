@@ -143,7 +143,15 @@ public class InvitationService {
         return invitationRepository.findInvitationByInviterUserOrInvitedUser(user1, user2);
     }
 
-    public List<Invitation> getReceivedInvitations(User user, Event event) {
-        return invitationRepository.findReceivedInvitationByUserAndEvent(user, event, Invitation.Status.PENDING);
+    public List<Invitation> getReceivedInvitations(User invitedUser) {
+        Event currentEvent = eventService.getActiveEvent().orElseThrow(() -> new RuntimeException("no active event"));
+        return invitationRepository.findReceivedInvitationByUserAndEvent(invitedUser, currentEvent, Invitation.Status.PENDING);
     }
+
+    public List<Invitation> getSentInvitations(User inviterUser) {
+        Event currentEvent = eventService.getActiveEvent().orElseThrow(() -> new RuntimeException("no active event"));
+        return invitationRepository.findSentInvitationByUserAndEvent(inviterUser, currentEvent, Invitation.Status.PENDING);
+    }
+
+
 }
