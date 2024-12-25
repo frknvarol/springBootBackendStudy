@@ -3,9 +3,12 @@ import com.dreamgames.backendengineeringcasestudy.model.Event;
 import com.dreamgames.backendengineeringcasestudy.model.Partnership;
 import com.dreamgames.backendengineeringcasestudy.model.User;
 import com.dreamgames.backendengineeringcasestudy.repository.PartnershipRepository;
+import com.dreamgames.backendengineeringcasestudy.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static com.dreamgames.backendengineeringcasestudy.Utils.EventUtils.isEventActive;
 
 
 @Service
@@ -13,12 +16,15 @@ public class PartnershipService {
 
     private final EventService eventService;
 
+    private final UserRepository userRepository;
+
     private final PartnershipRepository partnershipRepository;
 
     @Autowired
-    public PartnershipService(EventService eventService, PartnershipRepository partnershipRepository) {
+    public PartnershipService(EventService eventService, PartnershipRepository partnershipRepository, UserRepository userRepository) {
         this.eventService = eventService;
         this.partnershipRepository = partnershipRepository;
+        this.userRepository = userRepository;
     }
 
 
@@ -34,8 +40,63 @@ public class PartnershipService {
         newPartnership.setUser1(inviter);
         newPartnership.setUser2(invited);
         newPartnership.setEvent(eventService.getActiveEvent().orElseThrow(() -> new RuntimeException("no active event")));
+        newPartnership.setAbGroup(inviter.getAbGroup());
 
         partnershipRepository.save(newPartnership);
+    }
+
+    @Transactional
+    public void updateBalloonProgress(Partnership partnership) {
+        if (!partnership.isActive()) {
+            throw new RuntimeException("Partnership is not active.");
+        }
+
+        if (eventService.isEventActive(partnership.getEvent())) {
+            throw new RuntimeException("The associated event is not active.");
+        }
+
+        int progressThreshold = partnership.getAbGroup() == 'A' ? 1000 : 1500;
+
+        int newProgress = partnership.getBalloonProgress() + partnership.getHeliumCount();
+
+        if (newProgress > progressThreshold) {newProgress = progressThreshold;}
+
+        partnership.setBalloonProgress(newProgress);
+        partnership.setHeliumCount(0);
+
+        partnershipRepository.save(partnership);
+    }
+
+    //public String getBalloonsInfo() {}
+
+    @Transactional
+    public void claimReward(Partnership partnership) {
+        if (!partnership.isActive()) {
+            throw new RuntimeException("Partnership is not active.");
+        }
+
+        if (partnership.isRewardClaimed()) {
+            throw new RuntimeException("Reward has already been claimed.");
+        }
+
+        int progressAndReward = partnership.getAbGroup() == 'A' ? 1000 : 1500;
+
+        if (partnership.getBalloonProgress() < progressAndReward) {
+            throw new RuntimeException("Balloon progress is insufficient to claim the reward.");
+        }
+
+        User user1 = partnership.getUser1();
+        User user2 = partnership.getUser2();
+        user1.setCoins(user1.getCoins() + progressAndReward);
+        user2.setCoins(user2.getCoins() + progressAndReward);
+
+        partnership.setRewardClaimed(true);
+        partnership.setActive(false);
+
+        userRepository.save(user1);
+        userRepository.save(user2);
+        partnershipRepository.save(partnership);
+
     }
 
 

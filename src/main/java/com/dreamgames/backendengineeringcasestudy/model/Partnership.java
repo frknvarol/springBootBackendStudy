@@ -1,6 +1,8 @@
 package com.dreamgames.backendengineeringcasestudy.model;
 import jakarta.persistence.*;
 
+import java.io.CharArrayReader;
+
 @Entity
 public class Partnership {
     @Id
@@ -18,6 +20,9 @@ public class Partnership {
 
     @Column(nullable = false)
     private boolean active;
+
+    @Column(nullable = false)
+    private Character abGroup;
 
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false)
@@ -95,5 +100,13 @@ public class Partnership {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public Character getAbGroup() {
+        return abGroup;
+    }
+
+    public void setAbGroup(Character abGroup) {
+        this.abGroup = abGroup;
     }
 }
