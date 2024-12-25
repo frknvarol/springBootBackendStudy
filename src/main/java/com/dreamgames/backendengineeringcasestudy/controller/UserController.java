@@ -1,5 +1,7 @@
 package com.dreamgames.backendengineeringcasestudy.controller;
 
+import com.dreamgames.backendengineeringcasestudy.dto.request.GetSuggestionsRequest;
+import com.dreamgames.backendengineeringcasestudy.dto.response.SuggestionsResponse;
 import com.dreamgames.backendengineeringcasestudy.model.User;
 import com.dreamgames.backendengineeringcasestudy.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -27,5 +29,11 @@ public class UserController {
     public ResponseEntity<User> updateUserProgress(@PathVariable Long userId) {
         User updatedUser = userService.updateUserProgress(userId);
         return ResponseEntity.ok(updatedUser);
+    }
+
+    @PostMapping("/suggestions")
+    public ResponseEntity<SuggestionsResponse> getSuggestions(@RequestBody GetSuggestionsRequest request) {
+        SuggestionsResponse response = userService.getSuggestions(request);
+        return ResponseEntity.ok(response);
     }
 }

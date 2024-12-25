@@ -1,5 +1,7 @@
 package com.dreamgames.backendengineeringcasestudy.service;
 
+import com.dreamgames.backendengineeringcasestudy.dto.request.GetSuggestionsRequest;
+import com.dreamgames.backendengineeringcasestudy.dto.response.SuggestionsResponse;
 import com.dreamgames.backendengineeringcasestudy.model.Event;
 import com.dreamgames.backendengineeringcasestudy.model.Partnership;
 import com.dreamgames.backendengineeringcasestudy.model.User;
@@ -96,8 +98,10 @@ public class UserService {
         return user.getAbGroup();
     }
 
-    private List<User> getSuggestions(Character abGroup) {
-        return userRepository.findRandomPlayerFromSameGroup(abGroup);
+    public SuggestionsResponse getSuggestions(GetSuggestionsRequest request) {
+        List<User> suggestedUsers = userRepository.findRandomPlayerFromSameGroup(request.getAbGroup());
+
+        return new SuggestionsResponse(suggestedUsers);
     }
 
     public boolean hasPartner(Long userId) {
