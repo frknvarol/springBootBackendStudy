@@ -96,7 +96,7 @@ public class UserService {
         return user.getAbGroup();
     }
 
-    private List<User> getRandomPlayerFromSameGroup(Character abGroup) {
+    private List<User> getSuggestions(Character abGroup) {
         return userRepository.findRandomPlayerFromSameGroup(abGroup);
     }
 

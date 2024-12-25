@@ -1,4 +1,6 @@
 package com.dreamgames.backendengineeringcasestudy.service;
+import com.dreamgames.backendengineeringcasestudy.dto.request.UpdateBalloonProgressRequest;
+import com.dreamgames.backendengineeringcasestudy.dto.response.UpdateBalloonProgressResponse;
 import com.dreamgames.backendengineeringcasestudy.model.Event;
 import com.dreamgames.backendengineeringcasestudy.model.Partnership;
 import com.dreamgames.backendengineeringcasestudy.model.User;
@@ -7,6 +9,8 @@ import com.dreamgames.backendengineeringcasestudy.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 import static com.dreamgames.backendengineeringcasestudy.Utils.EventUtils.isEventActive;
 
@@ -46,7 +50,12 @@ public class PartnershipService {
     }
 
     @Transactional
-    public void updateBalloonProgress(Partnership partnership) {
+    public UpdateBalloonProgressResponse updateBalloonProgress(UpdateBalloonProgressRequest request) {
+
+        Partnership partnership = partnershipRepository.findById(request.getPartnershipId())
+        .orElseThrow(() -> new RuntimeException("Partnership not found"));
+
+
         if (!partnership.isActive()) {
             throw new RuntimeException("Partnership is not active.");
         }
@@ -65,6 +74,13 @@ public class PartnershipService {
         partnership.setHeliumCount(0);
 
         partnershipRepository.save(partnership);
+
+        UpdateBalloonProgressResponse response = new UpdateBalloonProgressResponse();
+        response.setSuccess(true);
+        response.setNewBalloonProgress(partnership.getBalloonProgress());
+        response.setRemainingHelium(partnership.getHeliumCount());
+
+        return response;
     }
 
     //public String getBalloonsInfo() {}

@@ -135,7 +135,7 @@ public class InvitationService {
 
     }
 
-    public List<Invitation> getAllInvitations() {
+    public List<Invitation> getInvitations() {
         return invitationRepository.findAll();
     }
 
