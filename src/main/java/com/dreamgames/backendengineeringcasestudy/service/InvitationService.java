@@ -2,7 +2,9 @@ package com.dreamgames.backendengineeringcasestudy.service;
 
 import com.dreamgames.backendengineeringcasestudy.dto.dto.InvitationDTO;
 import com.dreamgames.backendengineeringcasestudy.dto.request.GetInvitationsRequest;
+import com.dreamgames.backendengineeringcasestudy.dto.request.InvitePartnerRequest;
 import com.dreamgames.backendengineeringcasestudy.dto.response.InvitationsResponse;
+import com.dreamgames.backendengineeringcasestudy.dto.response.InvitePartnerResponse;
 import com.dreamgames.backendengineeringcasestudy.model.Event;
 import com.dreamgames.backendengineeringcasestudy.model.Invitation;
 import com.dreamgames.backendengineeringcasestudy.model.User;
@@ -43,26 +45,25 @@ public class InvitationService {
 
 
 
-    public void invitePartner(Long inviterId, Long invitedId, Event event) {
-        if (!eventService.isEventActive(event)) {
-            throw new RuntimeException("Event is not active");
-        }
-
+    public InvitePartnerResponse invitePartner(InvitePartnerRequest request) {
         Event activeEvent = eventService.getActiveEvent().orElseThrow(() -> new RuntimeException("no active event"));
 
-        User inviter = userRepository.findById(inviterId).orElseThrow(() -> new RuntimeException("User with ID " + inviterId + " not found"));
-        User invited = userRepository.findById(invitedId).orElseThrow(() -> new RuntimeException("User with ID " + invitedId + " not found"));
+
+        User inviter = userRepository.findById(request.getInviterId())
+                .orElseThrow(() -> new RuntimeException("User with ID " + request.getInviterId() + " not found"));
+        User invited = userRepository.findById(request.getInvitedId())
+                .orElseThrow(() -> new RuntimeException("User with ID " + request.getInvitedId() + " not found"));
 
         if (inviter.getLevel() < 50 || invited.getLevel() < 50) {
             throw new RuntimeException("Both users must be at least level 50 to participate");
         }
 
-        if(userService.hasPartner(inviterId)) {
-            throw new RuntimeException("User with ID " + inviterId + " Already has a partner in the active event");
+        if(userService.hasPartner(request.getInviterId())) {
+            throw new RuntimeException("User with ID " + request.getInviterId() + " Already has a partner in the active event");
         }
 
-        if(userService.hasPartner(invitedId)) {
-            throw new RuntimeException("User with ID " + invitedId + " Already has a partner in the active event");
+        if(userService.hasPartner(request.getInvitedId())) {
+            throw new RuntimeException("User with ID " + request.getInvitedId() + " Already has a partner in the active event");
         }
 
         if(!inviter.getAbGroup().equals(invited.getAbGroup())) {
@@ -77,6 +78,8 @@ public class InvitationService {
         newInvitation.setAbGroup(inviter.getAbGroup());
         newInvitation.setStatus(PENDING);
         invitationRepository.save(newInvitation);
+
+        return new InvitePartnerResponse("Invitation sent successfully", newInvitation.getId());
 
     }
 
@@ -95,7 +98,6 @@ public class InvitationService {
         User inviter = userRepository.findById(inviterId).orElseThrow(() -> new RuntimeException("No inviter with ID: " + inviterId));
         User invited = userRepository.findById(invitedId).orElseThrow(() -> new RuntimeException("No invited user with ID: " + invitedId));
 
-        // Deprecate all other invitations for both inviter and invited users
         List<Invitation> otherInvitations = invitationRepository.findAllByInviterUserOrInvitedUser(inviter, invited);
         for (Invitation otherInvitation : otherInvitations ) {
             if (!otherInvitation.getId().equals(invitationId) && otherInvitation.getStatus() == PENDING) {
@@ -114,11 +116,9 @@ public class InvitationService {
 
     public void rejectInvitation (Long invitationId) {
 
-        // Retrieve the invitation by its ID
         Invitation invitation = invitationRepository.findById(invitationId)
                 .orElseThrow(() -> new RuntimeException("No invitation found with ID: " + invitationId));
 
-        // Check the current status of the invitation
         if (invitation.getStatus() == REJECTED) {
             throw new RuntimeException("Invitation is already rejected");
         }
