@@ -4,7 +4,7 @@ import com.dreamgames.backendengineeringcasestudy.dto.request.CreateUserRequest;
 import com.dreamgames.backendengineeringcasestudy.dto.request.GetSuggestionsRequest;
 import com.dreamgames.backendengineeringcasestudy.dto.request.UpdateUserProgressRequest;
 import com.dreamgames.backendengineeringcasestudy.dto.response.CreateUserResponse;
-import com.dreamgames.backendengineeringcasestudy.dto.response.SuggestionsResponse;
+import com.dreamgames.backendengineeringcasestudy.dto.response.GetSuggestionsResponse;
 import com.dreamgames.backendengineeringcasestudy.dto.response.UpdateUserProgressResponse;
 import com.dreamgames.backendengineeringcasestudy.model.User;
 import com.dreamgames.backendengineeringcasestudy.service.UserService;
@@ -46,8 +46,8 @@ public class UserController {
     }
 
     @PostMapping("/suggestions")
-    public ResponseEntity<SuggestionsResponse> getSuggestions(@RequestBody GetSuggestionsRequest request) {
-        SuggestionsResponse response = userService.getSuggestions(request);
+    public ResponseEntity<GetSuggestionsResponse> getSuggestions(@RequestBody GetSuggestionsRequest request) {
+        GetSuggestionsResponse response = userService.getSuggestions(request);
         return ResponseEntity.ok(response);
     }
 }

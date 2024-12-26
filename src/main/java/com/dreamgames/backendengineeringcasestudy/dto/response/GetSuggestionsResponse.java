@@ -4,11 +4,11 @@ import com.dreamgames.backendengineeringcasestudy.model.User;
 
 import java.util.List;
 
-public class SuggestionsResponse {
+public class GetSuggestionsResponse {
     private List<User> suggestions;
 
     // Constructor
-    public SuggestionsResponse(List<User> suggestions) {
+    public GetSuggestionsResponse(List<User> suggestions) {
         this.suggestions = suggestions;
     }
 

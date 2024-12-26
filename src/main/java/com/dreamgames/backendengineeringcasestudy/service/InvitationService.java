@@ -1,21 +1,25 @@
 package com.dreamgames.backendengineeringcasestudy.service;
 
 import com.dreamgames.backendengineeringcasestudy.dto.dto.InvitationDTO;
+import com.dreamgames.backendengineeringcasestudy.dto.request.AcceptInvitationRequest;
 import com.dreamgames.backendengineeringcasestudy.dto.request.GetInvitationsRequest;
 import com.dreamgames.backendengineeringcasestudy.dto.request.InvitePartnerRequest;
-import com.dreamgames.backendengineeringcasestudy.dto.response.InvitationsResponse;
+import com.dreamgames.backendengineeringcasestudy.dto.request.RejectInvitationRequest;
+import com.dreamgames.backendengineeringcasestudy.dto.response.AcceptInvitationResponse;
+import com.dreamgames.backendengineeringcasestudy.dto.response.GetInvitationsResponse;
 import com.dreamgames.backendengineeringcasestudy.dto.response.InvitePartnerResponse;
+import com.dreamgames.backendengineeringcasestudy.dto.response.RejectInvitationResponse;
 import com.dreamgames.backendengineeringcasestudy.model.Event;
 import com.dreamgames.backendengineeringcasestudy.model.Invitation;
 import com.dreamgames.backendengineeringcasestudy.model.User;
+import com.dreamgames.backendengineeringcasestudy.repository.EventRepository;
 import com.dreamgames.backendengineeringcasestudy.repository.InvitationRepository;
-import com.dreamgames.backendengineeringcasestudy.repository.PartnershipRepository;
 import com.dreamgames.backendengineeringcasestudy.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.dreamgames.backendengineeringcasestudy.model.Invitation.Status.*;
 
@@ -32,14 +36,17 @@ public class InvitationService {
 
     private final InvitationRepository invitationRepository;
 
+    private final EventRepository eventRepository;
+
 
     @Autowired
-    public InvitationService(EventService eventService, PartnershipService partnershipService, UserService userService, UserRepository userRepository, InvitationRepository invitationRepository){
+    public InvitationService(EventService eventService, PartnershipService partnershipService, UserService userService, UserRepository userRepository, InvitationRepository invitationRepository, EventRepository eventRepository){
         this.eventService = eventService;
         this.partnershipService = partnershipService;
         this.userService = userService;
         this.userRepository = userRepository;
         this.invitationRepository = invitationRepository;
+        this.eventRepository = eventRepository;
     }
 
 
@@ -83,16 +90,20 @@ public class InvitationService {
 
     }
 
-    public void acceptInvitation(Long inviterId, Long invitationId, Event event) {
-        Invitation invitation = invitationRepository.findById(invitationId).orElseThrow(() -> new RuntimeException("No such invitation"));
+    @Transactional
+    public AcceptInvitationResponse acceptInvitation(AcceptInvitationRequest request) {
+        Invitation invitation = invitationRepository.findById(request.getInvitationId()).orElseThrow(() -> new RuntimeException("No such invitation"));
 
-        if (!eventService.isEventActive(event)) {
-            invitation.setStatus(DEPRECATED);
-            invitationRepository.save(invitation);
+        Long inviterId = request.getInviterId();
+        Long invitedId = invitation.getInvitedUser().getId();
+
+        Event event = eventRepository.findById(request.getEventId()).orElseThrow(() -> new RuntimeException("no such event"));
+
+
+        if (invitation.getStatus() != PENDING) {
             throw new RuntimeException("Event is not active");
         }
 
-        Long invitedId = invitation.getInvitedUser().getId();
 
 
         User inviter = userRepository.findById(inviterId).orElseThrow(() -> new RuntimeException("No inviter with ID: " + inviterId));
@@ -100,7 +111,7 @@ public class InvitationService {
 
         List<Invitation> otherInvitations = invitationRepository.findAllByInviterUserOrInvitedUser(inviter, invited);
         for (Invitation otherInvitation : otherInvitations ) {
-            if (!otherInvitation.getId().equals(invitationId) && otherInvitation.getStatus() == PENDING) {
+            if (!otherInvitation.getId().equals(request.getInvitationId()) && otherInvitation.getStatus() == PENDING) {
                 otherInvitation.setStatus(DEPRECATED);
             }
         }
@@ -112,12 +123,14 @@ public class InvitationService {
         invitation.setStatus(ACCEPTED);
         invitationRepository.save(invitation);
 
+        return new AcceptInvitationResponse(request.getInvitationId(), "Invitation accepted");
+
     }
 
-    public void rejectInvitation (Long invitationId) {
+    public RejectInvitationResponse rejectInvitation (RejectInvitationRequest request) {
 
-        Invitation invitation = invitationRepository.findById(invitationId)
-                .orElseThrow(() -> new RuntimeException("No invitation found with ID: " + invitationId));
+        Invitation invitation = invitationRepository.findById(request.getInvitationId())
+                .orElseThrow(() -> new RuntimeException("No invitation found with ID: " + request.getInvitationId()));
 
         if (invitation.getStatus() == REJECTED) {
             throw new RuntimeException("Invitation is already rejected");
@@ -135,6 +148,8 @@ public class InvitationService {
 
         invitationRepository.save(invitation);
 
+        return new RejectInvitationResponse(request.getInvitationId(), "Invitation rejected");
+
     }
 
     public List<Invitation> getInvitations() {
@@ -145,7 +160,7 @@ public class InvitationService {
         return invitationRepository.findInvitationByInviterUserOrInvitedUser(user1, user2);
     }
 
-    public InvitationsResponse getReceivedInvitations(GetInvitationsRequest request) {
+    public GetInvitationsResponse getReceivedInvitations(GetInvitationsRequest request) {
 
         User invitedUser = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -165,7 +180,7 @@ public class InvitationService {
                 ))
                 .toList();
 
-        return new InvitationsResponse(invitationDTOs);
+        return new GetInvitationsResponse(invitationDTOs);
     }
 
     public List<Invitation> getSentInvitations(User inviterUser) {

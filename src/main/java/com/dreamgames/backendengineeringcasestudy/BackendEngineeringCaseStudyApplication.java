@@ -6,21 +6,16 @@ import com.dreamgames.backendengineeringcasestudy.repository.InvitationRepositor
 import com.dreamgames.backendengineeringcasestudy.repository.UserRepository;
 import com.dreamgames.backendengineeringcasestudy.service.EventService;
 import com.dreamgames.backendengineeringcasestudy.service.InvitationService;
-import com.dreamgames.backendengineeringcasestudy.service.PartnershipService;
 import com.dreamgames.backendengineeringcasestudy.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.dreamgames.backendengineeringcasestudy")
 @EnableScheduling
 public class BackendEngineeringCaseStudyApplication {
 

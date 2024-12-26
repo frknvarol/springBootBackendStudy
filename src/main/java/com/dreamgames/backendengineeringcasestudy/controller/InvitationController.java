@@ -1,9 +1,13 @@
 package com.dreamgames.backendengineeringcasestudy.controller;
 
+import com.dreamgames.backendengineeringcasestudy.dto.request.AcceptInvitationRequest;
 import com.dreamgames.backendengineeringcasestudy.dto.request.GetInvitationsRequest;
 import com.dreamgames.backendengineeringcasestudy.dto.request.InvitePartnerRequest;
-import com.dreamgames.backendengineeringcasestudy.dto.response.InvitationsResponse;
+import com.dreamgames.backendengineeringcasestudy.dto.request.RejectInvitationRequest;
+import com.dreamgames.backendengineeringcasestudy.dto.response.AcceptInvitationResponse;
+import com.dreamgames.backendengineeringcasestudy.dto.response.GetInvitationsResponse;
 import com.dreamgames.backendengineeringcasestudy.dto.response.InvitePartnerResponse;
+import com.dreamgames.backendengineeringcasestudy.dto.response.RejectInvitationResponse;
 import com.dreamgames.backendengineeringcasestudy.service.InvitationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,8 +39,20 @@ public class InvitationController {
     }
 
     @PostMapping("/received")
-    public ResponseEntity<InvitationsResponse> getReceivedInvitations(@RequestBody GetInvitationsRequest request) {
-        InvitationsResponse response = invitationService.getReceivedInvitations(request);
+    public ResponseEntity<GetInvitationsResponse> getReceivedInvitations(@RequestBody GetInvitationsRequest request) {
+        GetInvitationsResponse response = invitationService.getReceivedInvitations(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/accept-invitation")
+    public ResponseEntity<AcceptInvitationResponse> acceptInvitation(@RequestBody AcceptInvitationRequest request) {
+        AcceptInvitationResponse response = invitationService.acceptInvitation(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/reject-invitation")
+    public ResponseEntity<RejectInvitationResponse> rejectInvitation(@RequestBody RejectInvitationRequest request) {
+        RejectInvitationResponse response = invitationService.rejectInvitation(request);
         return ResponseEntity.ok(response);
     }
 }

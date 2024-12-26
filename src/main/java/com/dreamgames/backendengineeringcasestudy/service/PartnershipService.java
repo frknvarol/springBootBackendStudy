@@ -1,5 +1,7 @@
 package com.dreamgames.backendengineeringcasestudy.service;
+import com.dreamgames.backendengineeringcasestudy.dto.request.GetBalloonsInfoRequest;
 import com.dreamgames.backendengineeringcasestudy.dto.request.UpdateBalloonProgressRequest;
+import com.dreamgames.backendengineeringcasestudy.dto.response.GetBalloonsInfoResponse;
 import com.dreamgames.backendengineeringcasestudy.dto.response.UpdateBalloonProgressResponse;
 import com.dreamgames.backendengineeringcasestudy.model.Event;
 import com.dreamgames.backendengineeringcasestudy.model.Partnership;
@@ -9,10 +11,6 @@ import com.dreamgames.backendengineeringcasestudy.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
-
-import static com.dreamgames.backendengineeringcasestudy.Utils.EventUtils.isEventActive;
 
 
 @Service
@@ -53,7 +51,7 @@ public class PartnershipService {
     public UpdateBalloonProgressResponse updateBalloonProgress(UpdateBalloonProgressRequest request) {
 
         Partnership partnership = partnershipRepository.findById(request.getPartnershipId())
-        .orElseThrow(() -> new RuntimeException("Partnership not found"));
+            .orElseThrow(() -> new RuntimeException("Partnership not found"));
 
 
         if (!partnership.isActive()) {
@@ -83,7 +81,31 @@ public class PartnershipService {
         return response;
     }
 
-    //public String getBalloonsInfo() {}
+    public GetBalloonsInfoResponse getBalloonsInfo(GetBalloonsInfoRequest request) {
+        Partnership partnership = partnershipRepository.findById(request.getPartnershipId())
+                .orElseThrow(() -> new RuntimeException("Partnership not found"));
+
+
+        if (!partnership.isActive()) {
+            throw new RuntimeException("Partnership is not active.");
+        }
+
+        if (eventService.isEventActive(partnership.getEvent())) {
+            throw new RuntimeException("The associated event is not active.");
+        }
+
+        return new GetBalloonsInfoResponse(
+                partnership.getUser1().getId(),
+                partnership.getUser2().getId(),
+                partnership.getEvent().getId(),
+                partnership.getBalloonProgress(),
+                partnership.isRewardClaimed(),
+                partnership.getHeliumCount(),
+                partnership.isActive(),
+                partnership.getAbGroup()
+        );
+
+    }
 
     @Transactional
     public void claimReward(Partnership partnership) {

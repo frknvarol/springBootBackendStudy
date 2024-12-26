@@ -4,13 +4,13 @@ import com.dreamgames.backendengineeringcasestudy.dto.dto.InvitationDTO;
 
 import java.util.List;
 
-public class InvitationsResponse {
+public class GetInvitationsResponse {
 
     private List<InvitationDTO> invitations;
 
-    public InvitationsResponse() {}
+    public GetInvitationsResponse() {}
 
-    public InvitationsResponse(List<InvitationDTO> invitations) {
+    public GetInvitationsResponse(List<InvitationDTO> invitations) {
         this.invitations = invitations;
     }
 

@@ -2,21 +2,17 @@ package com.dreamgames.backendengineeringcasestudy.service;
 
 import com.dreamgames.backendengineeringcasestudy.dto.request.GetSuggestionsRequest;
 import com.dreamgames.backendengineeringcasestudy.dto.request.UpdateUserProgressRequest;
-import com.dreamgames.backendengineeringcasestudy.dto.response.SuggestionsResponse;
+import com.dreamgames.backendengineeringcasestudy.dto.response.GetSuggestionsResponse;
 import com.dreamgames.backendengineeringcasestudy.dto.response.UpdateUserProgressResponse;
 import com.dreamgames.backendengineeringcasestudy.model.Event;
 import com.dreamgames.backendengineeringcasestudy.model.Partnership;
 import com.dreamgames.backendengineeringcasestudy.model.User;
-import com.dreamgames.backendengineeringcasestudy.repository.EventRepository;
 import com.dreamgames.backendengineeringcasestudy.repository.PartnershipRepository;
 import com.dreamgames.backendengineeringcasestudy.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -99,10 +95,10 @@ public class UserService {
         return user.getAbGroup();
     }
 
-    public SuggestionsResponse getSuggestions(GetSuggestionsRequest request) {
+    public GetSuggestionsResponse getSuggestions(GetSuggestionsRequest request) {
         List<User> suggestedUsers = userRepository.findRandomPlayerFromSameGroup(request.getAbGroup());
 
-        return new SuggestionsResponse(suggestedUsers);
+        return new GetSuggestionsResponse(suggestedUsers);
     }
 
     public boolean hasPartner(Long userId) {
