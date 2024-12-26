@@ -1,5 +1,8 @@
 package com.dreamgames.backendengineeringcasestudy.service;
 
+import com.dreamgames.backendengineeringcasestudy.dto.dto.InvitationDTO;
+import com.dreamgames.backendengineeringcasestudy.dto.request.GetInvitationsRequest;
+import com.dreamgames.backendengineeringcasestudy.dto.response.InvitationsResponse;
 import com.dreamgames.backendengineeringcasestudy.model.Event;
 import com.dreamgames.backendengineeringcasestudy.model.Invitation;
 import com.dreamgames.backendengineeringcasestudy.model.User;
@@ -10,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.dreamgames.backendengineeringcasestudy.model.Invitation.Status.*;
 
@@ -127,10 +131,8 @@ public class InvitationService {
             throw new RuntimeException("Invitation is accepted");
         }
 
-        // Update the status to REJECTED
         invitation.setStatus(REJECTED);
 
-        // Save the updated invitation
         invitationRepository.save(invitation);
 
     }
@@ -143,9 +145,27 @@ public class InvitationService {
         return invitationRepository.findInvitationByInviterUserOrInvitedUser(user1, user2);
     }
 
-    public List<Invitation> getReceivedInvitations(User invitedUser) {
-        Event currentEvent = eventService.getActiveEvent().orElseThrow(() -> new RuntimeException("no active event"));
-        return invitationRepository.findReceivedInvitationByUserAndEvent(invitedUser, currentEvent, Invitation.Status.PENDING);
+    public InvitationsResponse getReceivedInvitations(GetInvitationsRequest request) {
+
+        User invitedUser = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Event currentEvent = eventService.getActiveEvent()
+                .orElseThrow(() -> new RuntimeException("No active event"));
+
+        List<Invitation> invitations = invitationRepository.findReceivedInvitationByUserAndEvent(
+                invitedUser, currentEvent, Invitation.Status.PENDING
+        );
+
+        List<InvitationDTO> invitationDTOs = invitations.stream()
+                .map(invitation -> new InvitationDTO(
+                        invitation.getId(),
+                        invitation.getInviterUser().getId(),
+                        invitation.getInviterUser().getUsername()
+                ))
+                .toList();
+
+        return new InvitationsResponse(invitationDTOs);
     }
 
     public List<Invitation> getSentInvitations(User inviterUser) {

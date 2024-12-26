@@ -1,13 +1,16 @@
 package com.dreamgames.backendengineeringcasestudy.service;
 
 import com.dreamgames.backendengineeringcasestudy.dto.request.GetSuggestionsRequest;
+import com.dreamgames.backendengineeringcasestudy.dto.request.UpdateUserProgressRequest;
 import com.dreamgames.backendengineeringcasestudy.dto.response.SuggestionsResponse;
+import com.dreamgames.backendengineeringcasestudy.dto.response.UpdateUserProgressResponse;
 import com.dreamgames.backendengineeringcasestudy.model.Event;
 import com.dreamgames.backendengineeringcasestudy.model.Partnership;
 import com.dreamgames.backendengineeringcasestudy.model.User;
 import com.dreamgames.backendengineeringcasestudy.repository.EventRepository;
 import com.dreamgames.backendengineeringcasestudy.repository.PartnershipRepository;
 import com.dreamgames.backendengineeringcasestudy.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,20 +36,17 @@ public class UserService {
     }
 
 
-    // Method to create a new user
+    @Transactional
     public User createUser(String username) {
-        // Generate a unique user ID (if necessary) - depending on your DB auto-generation settings
         User newUser = new User();
         newUser.setUsername(username);
-        newUser.setLevel(1); // Default starting level
-        newUser.setCoins(2000); // Starting coins
+        newUser.setLevel(1);
+        newUser.setCoins(2000);
 
-        // Assign user to A/B Test group randomly (or based on a rule)
-        Character group = Math.random() < 0.5 ? 'A' : 'B'; // Random assignment
+        Character group = Math.random() < 0.5 ? 'A' : 'B';
         newUser.setAbGroup(group);
 
-        // Save the new user to the database
-        return userRepository.save(newUser); // Assuming you're using JPA repository
+        return userRepository.save(newUser);
     }
 
     public List<User> getAllUsers() {
@@ -65,31 +65,32 @@ public class UserService {
         }
     }
 
-    // Method to update user's progress
-    public User updateUserProgress(Long userId) {
-        // Fetch the user from the database
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+    public UpdateUserProgressResponse updateUserProgress(UpdateUserProgressRequest request) {
+        User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Update the user's level and coin count
         user.setLevel(user.getLevel() + 1);
         user.setCoins(user.getCoins() + 100);
 
+        Optional<Event> activeEventOpt = eventService.getActiveEvent();
 
-        // Check if the "Pop the Balloon" event is active
-        if (eventService.isEventActive(eventService.getActiveEvent().orElseThrow(() -> new RuntimeException("no active event")))) {
-            // Check if the user is in a partnership
-            Long currentEventId = eventService.getActiveEvent().orElseThrow(() -> new RuntimeException("no active event")).getId();
-            Partnership partnership = partnershipRepository.findByUserIdAndEventId(userId, currentEventId);
+        if (activeEventOpt.isPresent()) {
+            Long currentEventId = activeEventOpt.get().getId();
 
+            Partnership partnership = partnershipRepository.findByUserIdAndEventId(user.getId(), currentEventId);
+            if (partnership != null) {
+                partnership.setHeliumCount(partnership.getHeliumCount() + 10);
+                partnershipRepository.save(partnership);
 
-            partnership.setHeliumCount(partnership.getHeliumCount() + 10); // Increase helium count for the partnership
-            partnershipRepository.save(partnership); // Save the updated partnership
+                partnership.setBalloonProgress(partnership.getBalloonProgress() + 10);
 
-
+                partnership.setHeliumCount(partnership.getHeliumCount() + 10);
+                partnershipRepository.save(partnership);
+            }
         }
 
-        // Save the updated user data
-        return userRepository.save(user);
+        userRepository.save(user);
+
+        return new UpdateUserProgressResponse(user.getId(), user.getLevel(), user.getCoins());
     }
 
     private Character getABGroup(Long id) {
