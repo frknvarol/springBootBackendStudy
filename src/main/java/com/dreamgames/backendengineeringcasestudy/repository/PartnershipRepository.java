@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import com.dreamgames.backendengineeringcasestudy.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -26,6 +27,10 @@ public interface PartnershipRepository extends JpaRepository<Partnership, Long> 
     boolean existsByUserIdAndEventId(@Param("userId") Long userId, @Param("eventId") Long eventId);
 
     boolean existsByUser1AndUser2AndEvent(User user1, User user2, Event event);
+
+    @Modifying
+    @Query("UPDATE Partnership p SET p.active = :newActive WHERE p.active = :oldActive")
+    void updateActiveForDeprecatedPartnerships(@Param("newActive") boolean newActive, @Param("oldActive") boolean oldActive );
 
 
 }

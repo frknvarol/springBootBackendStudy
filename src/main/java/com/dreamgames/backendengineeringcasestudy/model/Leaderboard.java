@@ -2,17 +2,14 @@ package com.dreamgames.backendengineeringcasestudy.model;
 import jakarta.persistence.*;
 
 @Entity
-public class LeaderBoard {
+@Table(name = "leaderboard", indexes = {@Index(name = "idx_level", columnList = "level"), @Index(name ="idx_user_id", columnList = "user_id")})
+public class Leaderboard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @Column(nullable = false)
     private int level;
-
-    @Column(nullable = false)
-    private int ranking;
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -32,14 +29,6 @@ public class LeaderBoard {
 
     public void setLevel(int level) {
         this.level = level;
-    }
-
-    public int getRank() {
-        return ranking;
-    }
-
-    public void setRank(int rank) {
-        this.ranking = rank;
     }
 
     public User getUser() {

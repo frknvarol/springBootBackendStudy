@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.dreamgames.backendengineeringcasestudy.model.Invitation.Status.*;
 
@@ -56,12 +57,24 @@ public class InvitationService {
         Event activeEvent = eventService.getActiveEvent().orElseThrow(() -> new RuntimeException("no active event"));
 
 
-        User inviter = userRepository.findById(request.getInviterId())
+
+
+        User inviterUser = userRepository.findById(request.getInviterId())
                 .orElseThrow(() -> new RuntimeException("User with ID " + request.getInviterId() + " not found"));
-        User invited = userRepository.findById(request.getInvitedId())
+        User invitedUser = userRepository.findById(request.getInvitedId())
                 .orElseThrow(() -> new RuntimeException("User with ID " + request.getInvitedId() + " not found"));
 
-        if (inviter.getLevel() < 50 || invited.getLevel() < 50) {
+        List<Invitation> rejectedInvitations = invitationRepository.findReceivedInvitationByUserAndEvent(
+                invitedUser, activeEvent, Invitation.Status.REJECTED
+        );
+
+        for (Invitation invitation : rejectedInvitations) {
+            if (Objects.equals(invitation.getInviterUser().getId(), request.getInviterId())) {
+                throw new RuntimeException("Rejected users cannot send another invitation during the same event");
+            }
+        }
+
+        if (inviterUser.getLevel() < 50 || invitedUser.getLevel() < 50) {
             throw new RuntimeException("Both users must be at least level 50 to participate");
         }
 
@@ -73,16 +86,16 @@ public class InvitationService {
             throw new RuntimeException("User with ID " + request.getInvitedId() + " Already has a partner in the active event");
         }
 
-        if(!inviter.getAbGroup().equals(invited.getAbGroup())) {
+        if(!inviterUser.getAbGroup().equals(invitedUser.getAbGroup())) {
             throw new RuntimeException("Users must belong to the same group to partner");
         }
 
         Invitation newInvitation = new Invitation();
 
-        newInvitation.setInvitedUser(invited);
-        newInvitation.setInviterUser(inviter);
+        newInvitation.setInvitedUser(invitedUser);
+        newInvitation.setInviterUser(inviterUser);
         newInvitation.setEvent(activeEvent);
-        newInvitation.setAbGroup(inviter.getAbGroup());
+        newInvitation.setAbGroup(inviterUser.getAbGroup());
         newInvitation.setStatus(PENDING);
         invitationRepository.save(newInvitation);
 
@@ -106,10 +119,10 @@ public class InvitationService {
 
 
 
-        User inviter = userRepository.findById(inviterId).orElseThrow(() -> new RuntimeException("No inviter with ID: " + inviterId));
-        User invited = userRepository.findById(invitedId).orElseThrow(() -> new RuntimeException("No invited user with ID: " + invitedId));
+        User inviterUser = userRepository.findById(inviterId).orElseThrow(() -> new RuntimeException("No inviter with ID: " + inviterId));
+        User invitedUser = userRepository.findById(invitedId).orElseThrow(() -> new RuntimeException("No invited user with ID: " + invitedId));
 
-        List<Invitation> otherInvitations = invitationRepository.findAllByInviterUserOrInvitedUser(inviter, invited);
+        List<Invitation> otherInvitations = invitationRepository.findAllByInviterUserOrInvitedUser(inviterUser, invitedUser);
         for (Invitation otherInvitation : otherInvitations ) {
             if (!otherInvitation.getId().equals(request.getInvitationId()) && otherInvitation.getStatus() == PENDING) {
                 otherInvitation.setStatus(DEPRECATED);
@@ -118,7 +131,7 @@ public class InvitationService {
         invitationRepository.saveAll(otherInvitations);
 
 
-        partnershipService.createPartnership(inviter, invited, event);
+        partnershipService.createPartnership(inviterUser, invitedUser, event);
 
         invitation.setStatus(ACCEPTED);
         invitationRepository.save(invitation);

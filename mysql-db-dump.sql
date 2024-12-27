@@ -32,7 +32,6 @@ CREATE TABLE IF NOT EXISTS leaderboard (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL,
     level INT NOT NULL,
-    ranking INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
 
@@ -53,18 +52,8 @@ CREATE TABLE IF NOT EXISTS invitation (
 
 
 
-
-CREATE INDEX idx_users_level ON user(level);
-CREATE INDEX idx_events_time ON event(start_time, end_time);
-CREATE INDEX idx_partnerships_users ON partnership(user1_id, user2_id);
-
-INSERT INTO user (username, level, coins, ab_group) VALUES ('Furkan', 10, 2200, 'A'), ('Ahmet', 15, 3000, 'B'), ('Fatih', 5, 1500, 'A');
-
-INSERT INTO event (name, start_time, end_time) VALUES ('Pop the Balloon', '2024-12-18 08:00:00', '2024-12-18 22:00:00');
-
-INSERT INTO partnership (user1_id, user2_id, helium_collected, balloon_progress, event_id) VALUES (1, 2, 50, 0, 1);
-
-INSERT INTO leaderboard (user_id, level, ranking) VALUES (1, 10, 1), (2, 15, 2), (3, 5, 3);
+CREATE INDEX idx_user_id ON leaderboard (user_id);
+CREATE INDEX idx_level ON leaderboard (level);
 
 */
 

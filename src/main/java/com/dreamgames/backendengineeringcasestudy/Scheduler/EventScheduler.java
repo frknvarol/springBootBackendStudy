@@ -4,6 +4,7 @@ import com.dreamgames.backendengineeringcasestudy.model.Event;
 import com.dreamgames.backendengineeringcasestudy.model.Invitation;
 import com.dreamgames.backendengineeringcasestudy.repository.EventRepository;
 import com.dreamgames.backendengineeringcasestudy.repository.InvitationRepository;
+import com.dreamgames.backendengineeringcasestudy.repository.PartnershipRepository;
 import com.dreamgames.backendengineeringcasestudy.service.EventService;
 import com.dreamgames.backendengineeringcasestudy.service.InvitationService;
 import jakarta.transaction.Transactional;
@@ -21,16 +22,16 @@ import static com.dreamgames.backendengineeringcasestudy.model.Invitation.Status
 public class EventScheduler {
 
     private final EventRepository eventRepository;
-    private final InvitationService invitationService;
     private final InvitationRepository invitationRepository;
+    private final PartnershipRepository partnershipRepository;
 
-    public EventScheduler(EventRepository eventRepository, InvitationService invitationService, InvitationRepository invitationRepository) {
+    public EventScheduler(EventRepository eventRepository, PartnershipRepository partnershipRepository, InvitationRepository invitationRepository) {
         this.eventRepository = eventRepository;
-        this.invitationService = invitationService;
         this.invitationRepository = invitationRepository;
+        this.partnershipRepository = partnershipRepository;
     }
 
-    @Scheduled(cron = "0 0 8 * * ?", zone = "UTC") // At 08:00 UTC daily
+    @Scheduled(cron = "0 0 8 * * ?", zone = "UTC")
     public void createEvent() {
         Event newEvent = new Event();
         newEvent.setName("Event");
@@ -40,26 +41,15 @@ public class EventScheduler {
         eventRepository.save(newEvent);
     }
 
-    @Scheduled(cron = "0 0 22 * * ?", zone = "UTC") // At 22:00 UTC daily
+    @Scheduled(cron = "0 0 22 * * ?", zone = "UTC")
     @Transactional
     public void deprecateInactiveInvitations() {
+        invitationRepository.updateStatusForPending(Invitation.Status.DEPRECATED,  Invitation.Status.PENDING);
+    }
 
-        //All invitations that belong to an inactive event automatically set to DEPRECATED
-        /*
-        List<Invitation> invitations = invitationService.getAllInvitations();
-        for (Invitation invitation : invitations) {
-            System.out.println("Before Update: " + invitation.getId() + " Status: " + invitation.getStatus());
-            if (invitation.getStatus() == PENDING) {
-                invitation.setStatus(DEPRECATED);
-                invitationRepository.save(invitation);
-                System.out.println("Updated: " + invitation.getId() + " Status: " + invitation.getStatus());
-            }
-        }
-        */
-
-        invitationRepository.updateStatusForPending( Invitation.Status.DEPRECATED,  Invitation.Status.PENDING);
-
-
-
+    @Scheduled(cron = "0 0 22 * * ?", zone = "UTC")
+    @Transactional
+    public void deprecateInactivePartnerships() {
+        partnershipRepository.updateActiveForDeprecatedPartnerships(false, true);
     }
 }

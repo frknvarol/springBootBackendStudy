@@ -1,0 +1,32 @@
+package com.dreamgames.backendengineeringcasestudy.service;
+
+import com.dreamgames.backendengineeringcasestudy.dto.dto.LeaderboardDTO;
+import com.dreamgames.backendengineeringcasestudy.model.Leaderboard;
+import com.dreamgames.backendengineeringcasestudy.repository.LeaderboardRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class LeaderboardService {
+
+    private final LeaderboardRepository leaderboardRepository;
+
+    @Autowired
+    public LeaderboardService(LeaderboardRepository leaderboardRepository) {
+        this.leaderboardRepository = leaderboardRepository;
+    }
+
+    public List<LeaderboardDTO> getTop100Players() {
+        List<Leaderboard> topPlayers = leaderboardRepository.findTop100ByOrderByLevelDesc();
+
+        return topPlayers.stream()
+                .map(player -> new LeaderboardDTO(player.getUser().getId(), player.getLevel())) // Assuming `getLevel` represents score
+                .limit(100)
+                .collect(Collectors.toList());
+    }
+
+
+}

@@ -32,7 +32,7 @@ public class User {
     private List<Partnership> partnershipsAsUser2 = new ArrayList<>();
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private LeaderBoard leaderBoard;
+    private Leaderboard leaderBoard;
 
     @OneToMany(mappedBy = "inviterUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Invitation> sentInvitations = new ArrayList<>();
@@ -121,11 +121,11 @@ public class User {
         this.partnershipsAsUser2 = partnershipsAsUser2;
     }
 
-    public LeaderBoard getLeaderBoard() {
+    public Leaderboard getLeaderBoard() {
         return leaderBoard;
     }
 
-    public void setLeaderBoard(LeaderBoard leaderBoard) {
+    public void setLeaderBoard(Leaderboard leaderBoard) {
         this.leaderBoard = leaderBoard;
     }
 }
