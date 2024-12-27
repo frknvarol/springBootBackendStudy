@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import static org.springframework.http.ResponseEntity.status;
 
 @RestController
-@RequestMapping("/api/invitations")
+@RequestMapping("/invitations")
 public class InvitationController {
 
     private final InvitationService invitationService;
@@ -37,7 +37,7 @@ public class InvitationController {
         }
     }
 
-    @PostMapping("/received")
+    @GetMapping("/received")
     public ResponseEntity<GetInvitationsResponse> getReceivedInvitations(@RequestBody GetInvitationsRequest request) {
         GetInvitationsResponse response = invitationService.getReceivedInvitations(request);
         return ResponseEntity.ok(response);

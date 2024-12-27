@@ -3,6 +3,7 @@ package com.dreamgames.backendengineeringcasestudy.controller;
 import com.dreamgames.backendengineeringcasestudy.dto.request.ClaimRewardRequest;
 import com.dreamgames.backendengineeringcasestudy.dto.request.GetBalloonsInfoRequest;
 import com.dreamgames.backendengineeringcasestudy.dto.request.UpdateBalloonProgressRequest;
+import com.dreamgames.backendengineeringcasestudy.dto.response.ClaimRewardResponse;
 import com.dreamgames.backendengineeringcasestudy.dto.response.GetBalloonsInfoResponse;
 import com.dreamgames.backendengineeringcasestudy.dto.response.UpdateBalloonProgressResponse;
 import com.dreamgames.backendengineeringcasestudy.model.Partnership;
@@ -14,29 +15,26 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static org.springframework.http.ResponseEntity.status;
+
 @RestController
 @RequestMapping("/partnership")
 public class PartnershipController {
 
     private final PartnershipService partnershipService;
-    private final PartnershipRepository partnershipRepository;
 
     @Autowired
-    public PartnershipController(PartnershipService partnershipService, PartnershipRepository partnershipRepository) {
-        this.partnershipRepository = partnershipRepository;
+    public PartnershipController(PartnershipService partnershipService) {
         this.partnershipService = partnershipService;
     }
 
     @PostMapping("/claim-reward")
-    public ResponseEntity<String> claimReward(@RequestBody ClaimRewardRequest request) {
-        Partnership partnership = partnershipRepository.findById(request.getPartnershipId())
-                .orElseThrow(() -> new RuntimeException("Partnership not found"));
-
+    public ResponseEntity<ClaimRewardResponse> claimReward(@RequestBody ClaimRewardRequest request) {
         try {
-            partnershipService.claimReward(partnership);
-            return ResponseEntity.ok("Reward claimed successfully.");
+            ClaimRewardResponse response = partnershipService.claimReward(request);
+            return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return status(HttpStatus.BAD_REQUEST).body(new ClaimRewardResponse("Bad request"));
         }
     }
 
@@ -51,4 +49,7 @@ public class PartnershipController {
         GetBalloonsInfoResponse response = partnershipService.getBalloonsInfo(request);
         return ResponseEntity.ok(response);
     }
+
+
+
 }

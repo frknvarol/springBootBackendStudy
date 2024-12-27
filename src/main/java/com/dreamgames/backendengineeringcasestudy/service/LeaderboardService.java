@@ -19,12 +19,11 @@ public class LeaderboardService {
         this.leaderboardRepository = leaderboardRepository;
     }
 
-    public List<LeaderboardDTO> getTop100Players() {
-        List<Leaderboard> topPlayers = leaderboardRepository.findTop100ByOrderByLevelDesc();
+    public List<LeaderboardDTO> getTop100Users() {
+        List<Leaderboard> topUsers = leaderboardRepository.findTop100ByOrderByLevelDesc();
 
-        return topPlayers.stream()
-                .map(player -> new LeaderboardDTO(player.getUser().getId(), player.getLevel())) // Assuming `getLevel` represents score
-                .limit(100)
+        return topUsers.stream()
+                .map(user -> new LeaderboardDTO(user.getUser().getId(), user.getLevel(), user.getUsername()))
                 .collect(Collectors.toList());
     }
 

@@ -9,8 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    List<User> findByUsername(String username);
-
     @Query("SELECT u FROM User u WHERE u.abGroup = :abGroup ORDER BY RAND() LIMIT 10")
     List<User> findRandomPlayerFromSameGroup(@Param("abGroup") Character ab_group);
 

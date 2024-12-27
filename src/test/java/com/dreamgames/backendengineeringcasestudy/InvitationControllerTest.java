@@ -1,9 +1,6 @@
 package com.dreamgames.backendengineeringcasestudy;
 import com.dreamgames.backendengineeringcasestudy.dto.dto.InvitationDTO;
-import com.dreamgames.backendengineeringcasestudy.dto.request.AcceptInvitationRequest;
-import com.dreamgames.backendengineeringcasestudy.dto.request.GetInvitationsRequest;
-import com.dreamgames.backendengineeringcasestudy.dto.request.InvitePartnerRequest;
-import com.dreamgames.backendengineeringcasestudy.dto.request.RejectInvitationRequest;
+import com.dreamgames.backendengineeringcasestudy.dto.request.*;
 import com.dreamgames.backendengineeringcasestudy.dto.response.AcceptInvitationResponse;
 import com.dreamgames.backendengineeringcasestudy.dto.response.GetInvitationsResponse;
 import com.dreamgames.backendengineeringcasestudy.dto.response.InvitePartnerResponse;
@@ -15,6 +12,7 @@ import com.dreamgames.backendengineeringcasestudy.repository.InvitationRepositor
 import com.dreamgames.backendengineeringcasestudy.repository.UserRepository;
 import com.dreamgames.backendengineeringcasestudy.service.EventService;
 import com.dreamgames.backendengineeringcasestudy.service.InvitationService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,12 +27,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -50,13 +50,7 @@ public class InvitationControllerTest {
     private InvitationService invitationService;
 
     @MockBean
-    private InvitationRepository invitationRepository;
-
-    @MockBean
     private EventService eventService;
-
-    @MockBean
-    private UserRepository userRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -79,51 +73,67 @@ public class InvitationControllerTest {
     @Mock
     private RejectInvitationResponse rejectInvitationResponse;
 
+    @Mock
+    private  GetInvitationsRequest getInvitationsRequest;
+
+    @Mock
+    private  GetInvitationsResponse getInvitationsResponse;
+
+
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        try (AutoCloseable ignored = MockitoAnnotations.openMocks(this)) {
+            objectMapper = new ObjectMapper();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
-    public void testGetReceivedInvitations() {
-        Long userId = 1L;
-        User user = new User();
-        user.setId(userId);
-        user.setUsername("furkan4545");
+    public void testGetReceivedInvitations() throws Exception {
 
-        Event event = new Event();
-        event.setId(1L);
+        getInvitationsRequest = new GetInvitationsRequest();
+        getInvitationsRequest.setUserId(1L);
 
-        Invitation invitation = new Invitation();
-        invitation.setId(101L);
-        invitation.setInviterUser(user);
-        invitation.setStatus(Invitation.Status.PENDING);
+        getInvitationsResponse = new GetInvitationsResponse();
 
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(eventService.getActiveEvent()).thenReturn(Optional.of(event));
-        when(invitationRepository.findReceivedInvitationByUserAndEvent(user, event, Invitation.Status.PENDING))
-                .thenReturn(List.of(invitation));
+        InvitationDTO invitation1 = new InvitationDTO(3L, 5L, "frkn");
+        InvitationDTO invitation2 = new InvitationDTO(5L, 52L, "ahmet");
+        InvitationDTO invitation3 = new InvitationDTO(7L, 15L, "furkan");
+
+        getInvitationsResponse.setInvitations(Arrays.asList(invitation1, invitation2, invitation3));
 
 
+        String requestBody = objectMapper.writeValueAsString(getInvitationsRequest);
 
 
-        GetInvitationsRequest request = new GetInvitationsRequest(userId);
-        GetInvitationsResponse response = new GetInvitationsResponse(List.of(new InvitationDTO(101L, 1L, "furkan4545")));
+        when(invitationService.getReceivedInvitations(any(GetInvitationsRequest.class))).thenReturn(getInvitationsResponse);
+
+        mockMvc.perform(get("/invitations/received")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.invitations[0].invitationId").value(3))
+                .andExpect(jsonPath("$.invitations[0].inviterId").value(5))
+                .andExpect(jsonPath("$.invitations[0].inviterUsername").value("frkn"))
+                .andExpect(jsonPath("$.invitations[1].invitationId").value(5))
+                .andExpect(jsonPath("$.invitations[1].inviterId").value(52))
+                .andExpect(jsonPath("$.invitations[1].inviterUsername").value("ahmet"))
+                .andExpect(jsonPath("$.invitations[2].invitationId").value(7))
+                .andExpect(jsonPath("$.invitations[2].inviterId").value(15))
+                .andExpect(jsonPath("$.invitations[2].inviterUsername").value("furkan"));
 
 
-        when(invitationService.getReceivedInvitations(request)).thenReturn(response);
 
-        assertNotNull(response);
-        assertEquals(1, response.getInvitations().size());
-        assertEquals(101L, response.getInvitations().get(0).getInvitationId());
-        assertEquals("furkan4545", response.getInvitations().get(0).getInviterUsername());
+
+
     }
 
 
 
 
     @Test
-    void testInvitePartner_success() throws Exception {
+    void testInvitePartner() throws Exception {
 
         invitePartnerRequest = new InvitePartnerRequest();
         invitePartnerRequest.setInvitedId(1L);
@@ -138,7 +148,7 @@ public class InvitationControllerTest {
 
         when(eventService.isEventActive(any(Event.class))).thenReturn(true);
 
-        mockMvc.perform(post("/api/invitations/invite")
+        mockMvc.perform(post("/invitations/invite")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(responseBody))
                 .andExpect(status().isCreated())
@@ -174,7 +184,7 @@ public class InvitationControllerTest {
         String responseBody = objectMapper.writeValueAsString(acceptInvitationResponse);
 
         // Perform the POST request
-        mockMvc.perform(post("/api/invitations/accept-invitation")
+        mockMvc.perform(post("/invitations/accept-invitation")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(responseBody))
                 .andExpect(status().isOk()) // Expect HTTP 200
@@ -196,7 +206,7 @@ public class InvitationControllerTest {
 
         String responseBody = new ObjectMapper().writeValueAsString(rejectInvitationResponse);
 
-        mockMvc.perform(post("/api/invitations/reject-invitation")
+        mockMvc.perform(post("/invitations/reject-invitation")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(responseBody))
                 .andExpect(status().isOk())

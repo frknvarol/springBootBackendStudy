@@ -1,4 +1,3 @@
-version: '3.9'
 
 services:
   app:
@@ -10,7 +9,7 @@ services:
     ports:
       - '8080:8080'
     networks:
-      - 'localhost'
+      - 'local-network'
 
   mysqldb:
     image: mysql:8.0.35-oracle
@@ -22,7 +21,7 @@ services:
       MYSQL_PASSWORD: 'frkn3756'
       MYSQL_ROOT_PASSWORD: 'frkn3756'
     networks:
-      - 'localhost'
+      - 'local-network'
     ports:
       - '3306:3306'
     volumes:

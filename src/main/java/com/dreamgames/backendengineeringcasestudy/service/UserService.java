@@ -59,21 +59,6 @@ public class UserService {
         return new CreateUserResponse(newUser.getId(), 1, 2000, newUser.getAbGroup());
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
-    public Optional<User> getUserById(Long id) {
-        return userRepository.findById(id);
-    }
-
-    public void deleteUser(Long id) {
-        if (userRepository.existsById(id)) {
-            userRepository.deleteById(id);
-        } else {
-            throw new RuntimeException("User not found with id: " + id);
-        }
-    }
 
     public UpdateUserProgressResponse updateUserProgress(UpdateUserProgressRequest request) {
         User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
@@ -108,11 +93,6 @@ public class UserService {
         return new UpdateUserProgressResponse(user.getId(), user.getLevel(), user.getCoins());
     }
 
-    private Character getABGroup(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
-
-        return user.getAbGroup();
-    }
 
     public GetSuggestionsResponse getSuggestions(GetSuggestionsRequest request) {
         List<User> suggestedUsers = userRepository.findRandomPlayerFromSameGroup(request.getAbGroup());
@@ -129,8 +109,5 @@ public class UserService {
     }
 
 
-    private boolean isUserEligibleForHelium(User user) {
-        return user.getLevel() >= 50;
-    }
 }
 

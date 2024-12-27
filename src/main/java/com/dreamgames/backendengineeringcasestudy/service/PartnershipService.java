@@ -1,6 +1,8 @@
 package com.dreamgames.backendengineeringcasestudy.service;
+import com.dreamgames.backendengineeringcasestudy.dto.request.ClaimRewardRequest;
 import com.dreamgames.backendengineeringcasestudy.dto.request.GetBalloonsInfoRequest;
 import com.dreamgames.backendengineeringcasestudy.dto.request.UpdateBalloonProgressRequest;
+import com.dreamgames.backendengineeringcasestudy.dto.response.ClaimRewardResponse;
 import com.dreamgames.backendengineeringcasestudy.dto.response.GetBalloonsInfoResponse;
 import com.dreamgames.backendengineeringcasestudy.dto.response.UpdateBalloonProgressResponse;
 import com.dreamgames.backendengineeringcasestudy.model.Event;
@@ -11,6 +13,8 @@ import com.dreamgames.backendengineeringcasestudy.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 
 @Service
@@ -74,7 +78,6 @@ public class PartnershipService {
         partnershipRepository.save(partnership);
 
         UpdateBalloonProgressResponse response = new UpdateBalloonProgressResponse();
-        response.setSuccess(true);
         response.setNewBalloonProgress(partnership.getBalloonProgress());
         response.setRemainingHelium(partnership.getHeliumCount());
 
@@ -108,7 +111,18 @@ public class PartnershipService {
     }
 
     @Transactional
-    public void claimReward(Partnership partnership) {
+    public ClaimRewardResponse claimReward(ClaimRewardRequest request) {
+
+        Optional<Partnership> partnershipOpt = partnershipRepository.findById(request.getPartnershipId());
+
+        Partnership partnership;
+
+        if (partnershipOpt.isPresent()) {
+            partnership = partnershipOpt.get();
+        }else {
+            throw new RuntimeException("no such partnership");
+        }
+
         if (!partnership.isActive()) {
             throw new RuntimeException("Partnership is not active.");
         }
@@ -135,9 +149,8 @@ public class PartnershipService {
         userRepository.save(user2);
         partnershipRepository.save(partnership);
 
+        return new ClaimRewardResponse("Reward claimed successfully");
+
     }
-
-
-
 
 }

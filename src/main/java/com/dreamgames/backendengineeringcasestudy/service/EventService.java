@@ -21,16 +21,6 @@ import java.util.Optional;
 @Service
 public class EventService {
 
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PartnershipRepository partnershipRepository;
-
-    @Autowired
-    private InvitationRepository invitationRepository;
-
     @Autowired
     private EventRepository eventRepository;
 
@@ -53,10 +43,4 @@ public class EventService {
 
         return true;
     }
-
-
-
-
-
-
 }

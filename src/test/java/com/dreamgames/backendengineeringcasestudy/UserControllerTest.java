@@ -7,7 +7,6 @@ import com.dreamgames.backendengineeringcasestudy.dto.response.CreateUserRespons
 import com.dreamgames.backendengineeringcasestudy.dto.response.GetSuggestionsResponse;
 import com.dreamgames.backendengineeringcasestudy.dto.response.UpdateUserProgressResponse;
 import com.dreamgames.backendengineeringcasestudy.model.User;
-import com.dreamgames.backendengineeringcasestudy.repository.UserRepository;
 import com.dreamgames.backendengineeringcasestudy.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,7 +62,11 @@ public class UserControllerTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        try (AutoCloseable ignored = MockitoAnnotations.openMocks(this)) {
+            objectMapper = new ObjectMapper();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
@@ -134,11 +137,6 @@ public class UserControllerTest {
         getSuggestionsResponse.setSuggestions(Arrays.asList(user1, user2, user3));
 
         String requestBody = objectMapper.writeValueAsString(getSuggestionsRequest);
-        String responseBody = objectMapper.writeValueAsString(getSuggestionsResponse);
-
-        System.out.println(requestBody);
-
-        System.out.println(responseBody);
 
         when(userService.getSuggestions(any(GetSuggestionsRequest.class))).thenReturn(getSuggestionsResponse);
 

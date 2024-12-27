@@ -14,8 +14,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PartnershipRepository extends JpaRepository<Partnership, Long> {
-    Optional<Partnership> findByUser1IdOrUser2Id(Long userId1, Long userId2);
-    Optional<Partnership> findByUser1IdAndUser2Id(Long userId1, Long userId2);
 
     @Query("SELECT p FROM Partnership p WHERE (p.user1.id = :userId OR p.user2.id = :userId) AND p.event.id = :eventId")
     Partnership findByUserIdAndEventId(@Param("userId") Long userId, @Param("eventId") Long eventId);

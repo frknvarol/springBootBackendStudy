@@ -38,7 +38,7 @@ public class User {
     private List<Invitation> sentInvitations = new ArrayList<>();
 
     @OneToMany(mappedBy = "invitedUser", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Invitation> recievedInvitations = new ArrayList<>();
+    private List<Invitation> receivedInvitations = new ArrayList<>();
 
 
     public User(String username, Character abGroup) {
@@ -127,5 +127,21 @@ public class User {
 
     public void setLeaderBoard(Leaderboard leaderBoard) {
         this.leaderBoard = leaderBoard;
+    }
+
+    public List<Invitation> getSentInvitations() {
+        return sentInvitations;
+    }
+
+    public void setSentInvitations(List<Invitation> sentInvitations) {
+        this.sentInvitations = sentInvitations;
+    }
+
+    public List<Invitation> getReceivedInvitations() {
+        return receivedInvitations;
+    }
+
+    public void setReceivedInvitations(List<Invitation> receivedInvitations) {
+        this.receivedInvitations = receivedInvitations;
     }
 }

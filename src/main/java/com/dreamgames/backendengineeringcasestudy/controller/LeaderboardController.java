@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/leaderboard")
+@RequestMapping("/leaderboard")
 public class LeaderboardController {
 
     private final LeaderboardService leaderboardService;
@@ -19,7 +19,7 @@ public class LeaderboardController {
     }
 
     @GetMapping("/top100")
-    public List<LeaderboardDTO> getTop100Players() {
-        return leaderboardService.getTop100Players();
+    public List<LeaderboardDTO> getTop100Users() {
+        return leaderboardService.getTop100Users();
     }
 }

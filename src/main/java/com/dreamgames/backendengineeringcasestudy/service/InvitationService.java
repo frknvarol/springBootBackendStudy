@@ -165,13 +165,6 @@ public class InvitationService {
 
     }
 
-    public List<Invitation> getInvitations() {
-        return invitationRepository.findAll();
-    }
-
-    public List<Invitation> findInvitationsForUser(User user1, User user2) {
-        return invitationRepository.findInvitationByInviterUserOrInvitedUser(user1, user2);
-    }
 
     public GetInvitationsResponse getReceivedInvitations(GetInvitationsRequest request) {
 
@@ -194,11 +187,6 @@ public class InvitationService {
                 .toList();
 
         return new GetInvitationsResponse(invitationDTOs);
-    }
-
-    public List<Invitation> getSentInvitations(User inviterUser) {
-        Event currentEvent = eventService.getActiveEvent().orElseThrow(() -> new RuntimeException("no active event"));
-        return invitationRepository.findSentInvitationByUserAndEvent(inviterUser, currentEvent, Invitation.Status.PENDING);
     }
 
 
