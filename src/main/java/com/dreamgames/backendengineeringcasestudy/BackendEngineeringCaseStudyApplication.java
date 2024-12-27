@@ -102,6 +102,7 @@ public class BackendEngineeringCaseStudyApplication {
 
 
 
+
             //User user = userRepository.findById(3L).orElseThrow(() -> new RuntimeException("no such user"));
 
             //System.out.println(invitationService.findInvitationsForUser(user, user).toString());

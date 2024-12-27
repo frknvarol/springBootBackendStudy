@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS leaderboard (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id BIGINT NOT NULL,
     level INT NOT NULL,
+    username VARCHAR(255) NOT NULL
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
 

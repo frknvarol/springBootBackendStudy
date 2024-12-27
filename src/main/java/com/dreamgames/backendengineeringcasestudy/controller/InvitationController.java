@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static org.springframework.http.ResponseEntity.status;
+
 @RestController
 @RequestMapping("/api/invitations")
 public class InvitationController {
@@ -34,7 +36,7 @@ public class InvitationController {
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         }
         catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new InvitePartnerResponse(e.getMessage(), null));
+            return status(HttpStatus.BAD_REQUEST).body(new InvitePartnerResponse(e.getMessage(), null));
         }
     }
 

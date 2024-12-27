@@ -26,17 +26,8 @@ public class UserController {
 
     @PostMapping("/create")
     public ResponseEntity<CreateUserResponse> createUser(@Valid @RequestBody CreateUserRequest request) {
-        User createdUser = userService.createUser(request.getUsername());
-
-        CreateUserResponse response = new CreateUserResponse(
-                createdUser.getId(),
-                createdUser.getLevel(),
-                createdUser.getCoins(),
-                createdUser.getAbGroup()
-        );
-
+        CreateUserResponse response = userService.createUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
-
     }
 
     @PutMapping("/{userId}/progress")
