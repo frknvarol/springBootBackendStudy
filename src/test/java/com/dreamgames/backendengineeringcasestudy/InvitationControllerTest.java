@@ -1,9 +1,13 @@
 package com.dreamgames.backendengineeringcasestudy;
 import com.dreamgames.backendengineeringcasestudy.dto.dto.InvitationDTO;
+import com.dreamgames.backendengineeringcasestudy.dto.request.AcceptInvitationRequest;
 import com.dreamgames.backendengineeringcasestudy.dto.request.GetInvitationsRequest;
 import com.dreamgames.backendengineeringcasestudy.dto.request.InvitePartnerRequest;
+import com.dreamgames.backendengineeringcasestudy.dto.request.RejectInvitationRequest;
+import com.dreamgames.backendengineeringcasestudy.dto.response.AcceptInvitationResponse;
 import com.dreamgames.backendengineeringcasestudy.dto.response.GetInvitationsResponse;
 import com.dreamgames.backendengineeringcasestudy.dto.response.InvitePartnerResponse;
+import com.dreamgames.backendengineeringcasestudy.dto.response.RejectInvitationResponse;
 import com.dreamgames.backendengineeringcasestudy.model.Event;
 import com.dreamgames.backendengineeringcasestudy.model.Invitation;
 import com.dreamgames.backendengineeringcasestudy.model.User;
@@ -16,6 +20,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -62,8 +67,21 @@ public class InvitationControllerTest {
     @Mock
     private InvitePartnerResponse invitePartnerResponse;
 
+    @Mock
+    private AcceptInvitationRequest acceptInvitationRequest;
+
+    @Mock
+    private AcceptInvitationResponse acceptInvitationResponse;
+
+    @Mock
+    private RejectInvitationRequest rejectInvitationRequest;
+
+    @Mock
+    private RejectInvitationResponse rejectInvitationResponse;
+
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -140,5 +158,51 @@ public class InvitationControllerTest {
 
     }
 
+    @Test
+    void testAcceptInvitation() throws Exception {
+        acceptInvitationRequest = new AcceptInvitationRequest();
+        acceptInvitationRequest.setInvitationId(1L);
+        acceptInvitationRequest.setInviterId(2L);
+        acceptInvitationRequest.setEventId(3L);
+
+        acceptInvitationResponse = new AcceptInvitationResponse();
+        acceptInvitationResponse.setMessage("Invitation accepted successfully");
+        acceptInvitationResponse.setInvitationId(1L);
+
+        when(invitationService.acceptInvitation(any(AcceptInvitationRequest.class))).thenReturn(acceptInvitationResponse);
+
+        String responseBody = objectMapper.writeValueAsString(acceptInvitationResponse);
+
+        // Perform the POST request
+        mockMvc.perform(post("/api/invitations/accept-invitation")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(responseBody))
+                .andExpect(status().isOk()) // Expect HTTP 200
+                .andExpect(jsonPath("$.message").value("Invitation accepted successfully")) // Check the message
+                .andExpect(jsonPath("$.invitationId").value(1)); // Check the invitation ID
+
+
+
+    }
+
+    @Test
+    void testRejectInvitation() throws Exception {
+        rejectInvitationRequest = new RejectInvitationRequest();
+        rejectInvitationRequest.setInvitationId(1L);
+
+        rejectInvitationResponse = new RejectInvitationResponse(1L,"Invitation rejected successfully");
+
+        when(invitationService.rejectInvitation(any(RejectInvitationRequest.class))).thenReturn(rejectInvitationResponse);
+
+        String responseBody = new ObjectMapper().writeValueAsString(rejectInvitationResponse);
+
+        mockMvc.perform(post("/api/invitations/reject-invitation")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(responseBody))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Invitation rejected successfully"))
+                .andExpect(jsonPath("$.invitationId").value(1));
+
+    }
 
 }

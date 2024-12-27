@@ -11,10 +11,7 @@ import com.dreamgames.backendengineeringcasestudy.dto.response.RejectInvitationR
 import com.dreamgames.backendengineeringcasestudy.service.InvitationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.ResponseEntity.status;
 
@@ -48,8 +45,12 @@ public class InvitationController {
 
     @PostMapping("/accept-invitation")
     public ResponseEntity<AcceptInvitationResponse> acceptInvitation(@RequestBody AcceptInvitationRequest request) {
-        AcceptInvitationResponse response = invitationService.acceptInvitation(request);
-        return ResponseEntity.ok(response);
+        try {
+            AcceptInvitationResponse response = invitationService.acceptInvitation(request);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return status(HttpStatus.BAD_REQUEST).body(new AcceptInvitationResponse(null, e.getMessage()));
+        }
     }
 
     @PostMapping("/reject-invitation")

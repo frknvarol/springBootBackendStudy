@@ -36,7 +36,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/suggestions")
+    @GetMapping("/suggestions")
     public ResponseEntity<GetSuggestionsResponse> getSuggestions(@RequestBody GetSuggestionsRequest request) {
         GetSuggestionsResponse response = userService.getSuggestions(request);
         return ResponseEntity.ok(response);

@@ -7,6 +7,8 @@ public class CreateUserRequest {
     @NotBlank(message = "username cannot be blank")
     private String username;
 
+    public CreateUserRequest() {}
+
     public CreateUserRequest(String username) {
         this.username = username;
     }

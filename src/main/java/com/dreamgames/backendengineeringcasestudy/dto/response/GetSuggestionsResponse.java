@@ -7,7 +7,9 @@ import java.util.List;
 public class GetSuggestionsResponse {
     private List<User> suggestions;
 
-    // Constructor
+    public GetSuggestionsResponse() {
+    }
+
     public GetSuggestionsResponse(List<User> suggestions) {
         this.suggestions = suggestions;
     }

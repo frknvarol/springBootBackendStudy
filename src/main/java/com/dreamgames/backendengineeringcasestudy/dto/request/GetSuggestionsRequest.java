@@ -3,6 +3,8 @@ package com.dreamgames.backendengineeringcasestudy.dto.request;
 public class GetSuggestionsRequest {
     private Character abGroup;
 
+    public GetSuggestionsRequest() {}
+
     public GetSuggestionsRequest(Character abGroup) {
         this.abGroup = abGroup;
     }
