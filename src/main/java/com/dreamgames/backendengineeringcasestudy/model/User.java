@@ -1,4 +1,5 @@
 package com.dreamgames.backendengineeringcasestudy.model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,18 +27,23 @@ public class User {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToMany(mappedBy = "user1", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Partnership> partnershipsAsUser1 = new ArrayList<>();
 
     @OneToMany(mappedBy = "user2", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Partnership> partnershipsAsUser2 = new ArrayList<>();
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Leaderboard leaderBoard;
 
     @OneToMany(mappedBy = "inviterUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Invitation> sentInvitations = new ArrayList<>();
 
     @OneToMany(mappedBy = "invitedUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Invitation> receivedInvitations = new ArrayList<>();
 
 

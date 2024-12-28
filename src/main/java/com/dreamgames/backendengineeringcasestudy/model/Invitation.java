@@ -47,11 +47,6 @@ public class Invitation {
         this.event = event;
     }
 
-    @Override
-    public String toString() {
-        return String.format("Invitation[id=%d, inviterUser='%s', invitedUser='%s', event='%s', abGroup='%s', status='%s'",
-                id, inviterUser, invitedUser, event, abGroup, status);
-    }
 
     public Long getId() {
         return id;

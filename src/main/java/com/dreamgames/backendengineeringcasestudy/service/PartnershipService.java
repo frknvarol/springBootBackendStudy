@@ -47,6 +47,7 @@ public class PartnershipService {
         newPartnership.setUser2(invited);
         newPartnership.setEvent(eventService.getActiveEvent().orElseThrow(() -> new RuntimeException("no active event")));
         newPartnership.setAbGroup(inviter.getAbGroup());
+        newPartnership.setActive(true);
 
         partnershipRepository.save(newPartnership);
     }
@@ -62,18 +63,15 @@ public class PartnershipService {
             throw new RuntimeException("Partnership is not active.");
         }
 
-        if (eventService.isEventActive(partnership.getEvent())) {
-            throw new RuntimeException("The associated event is not active.");
-        }
 
         int progressThreshold = partnership.getAbGroup() == 'A' ? 1000 : 1500;
 
-        int newProgress = partnership.getBalloonProgress() + partnership.getHeliumCount();
+        int newProgress = partnership.getBalloonProgress() + request.getHeliumUsed();
 
         if (newProgress > progressThreshold) {newProgress = progressThreshold;}
 
         partnership.setBalloonProgress(newProgress);
-        partnership.setHeliumCount(0);
+        partnership.setHeliumCount(partnership.getHeliumCount() - request.getHeliumUsed());
 
         partnershipRepository.save(partnership);
 
@@ -93,9 +91,6 @@ public class PartnershipService {
             throw new RuntimeException("Partnership is not active.");
         }
 
-        if (eventService.isEventActive(partnership.getEvent())) {
-            throw new RuntimeException("The associated event is not active.");
-        }
 
         return new GetBalloonsInfoResponse(
                 partnership.getUser1().getId(),

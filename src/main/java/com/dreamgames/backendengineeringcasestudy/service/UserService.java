@@ -73,13 +73,9 @@ public class UserService {
 
             Partnership partnership = partnershipRepository.findByUserIdAndEventId(user.getId(), currentEventId);
             if (partnership != null) {
-                partnership.setHeliumCount(partnership.getHeliumCount() + 10);
+                partnership.setHeliumCount(partnership.getHeliumCount() + 50);
                 partnershipRepository.save(partnership);
 
-                partnership.setBalloonProgress(partnership.getBalloonProgress() + 10);
-
-                partnership.setHeliumCount(partnership.getHeliumCount() + 10);
-                partnershipRepository.save(partnership);
             }
         }
 
