@@ -1,22 +1,15 @@
 package com.dreamgames.backendengineeringcasestudy.Scheduler;
-import com.dreamgames.backendengineeringcasestudy.Config.EventConfig;
 import com.dreamgames.backendengineeringcasestudy.model.Event;
 import com.dreamgames.backendengineeringcasestudy.model.Invitation;
 import com.dreamgames.backendengineeringcasestudy.repository.EventRepository;
 import com.dreamgames.backendengineeringcasestudy.repository.InvitationRepository;
 import com.dreamgames.backendengineeringcasestudy.repository.PartnershipRepository;
-import com.dreamgames.backendengineeringcasestudy.service.EventService;
-import com.dreamgames.backendengineeringcasestudy.service.InvitationService;
 import jakarta.transaction.Transactional;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
-import java.util.List;
 
-import static com.dreamgames.backendengineeringcasestudy.model.Invitation.Status.DEPRECATED;
-import static com.dreamgames.backendengineeringcasestudy.model.Invitation.Status.PENDING;
 
 @Component
 public class EventScheduler {
