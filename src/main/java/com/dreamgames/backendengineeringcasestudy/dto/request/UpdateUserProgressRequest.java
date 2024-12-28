@@ -1,9 +1,7 @@
 package com.dreamgames.backendengineeringcasestudy.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UpdateUserProgressRequest {
-    @JsonProperty("userId")
     private Long userId;
 
     public UpdateUserProgressRequest() {}

@@ -1,14 +1,11 @@
 package com.dreamgames.backendengineeringcasestudy.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 public class InvitePartnerResponse {
 
-    @JsonProperty("invitationId")
     private Long invitationId;
 
-    @JsonProperty("message")
     private String message;
 
     public InvitePartnerResponse() {}

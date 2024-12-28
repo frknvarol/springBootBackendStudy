@@ -1,15 +1,10 @@
 package com.dreamgames.backendengineeringcasestudy.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class CreateUserResponse {
-    @JsonProperty("id")
     private Long id;
-    @JsonProperty("level")
     private Integer level;
-    @JsonProperty("coins")
     private Integer coins;
-    @JsonProperty("abGroup")
     private Character abGroup;
 
     public CreateUserResponse() {}

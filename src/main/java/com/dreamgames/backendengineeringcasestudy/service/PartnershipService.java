@@ -64,10 +64,12 @@ public class PartnershipService {
         }
 
 
+        // checks the ab group and assigns the appropriate balloon progress limit
         int progressThreshold = partnership.getAbGroup() == 'A' ? 1000 : 1500;
 
         int newProgress = partnership.getBalloonProgress() + request.getHeliumUsed();
 
+        // if the users use more helium than it is needed to pop the balloon it sets the balloon progress to the limit
         if (newProgress > progressThreshold) {newProgress = progressThreshold;}
 
         partnership.setBalloonProgress(newProgress);
@@ -105,6 +107,7 @@ public class PartnershipService {
 
     }
 
+    // when a user claims a reward both users automatically get rewarded and the partnership is set to inactive
     @Transactional
     public ClaimRewardResponse claimReward(ClaimRewardRequest request) {
 

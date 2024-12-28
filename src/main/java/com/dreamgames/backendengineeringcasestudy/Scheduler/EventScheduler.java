@@ -31,6 +31,7 @@ public class EventScheduler {
         this.partnershipRepository = partnershipRepository;
     }
 
+    // automatically adds an event to the table at 8:00
     @Scheduled(cron = "0 0 8 * * ?", zone = "UTC")
     public void createEvent() {
         Event newEvent = new Event();
@@ -41,12 +42,14 @@ public class EventScheduler {
         eventRepository.save(newEvent);
     }
 
+    // deprecates the invitations that belong to an inactive event
     @Scheduled(cron = "0 0 22 * * ?", zone = "UTC")
     @Transactional
     public void deprecateInactiveInvitations() {
         invitationRepository.updateStatusForPending(Invitation.Status.DEPRECATED,  Invitation.Status.PENDING);
     }
 
+    // deprecates the partnerships that belong to an inactive event
     @Scheduled(cron = "0 0 22 * * ?", zone = "UTC")
     @Transactional
     public void deprecateInactivePartnerships() {

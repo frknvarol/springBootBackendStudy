@@ -64,6 +64,7 @@ public class InvitationService {
         User invitedUser = userRepository.findById(request.getInvitedId())
                 .orElseThrow(() -> new RuntimeException("User with ID " + request.getInvitedId() + " not found"));
 
+        // checks whether the inviter user has already been rejected by the invited user
         List<Invitation> rejectedInvitations = invitationRepository.findReceivedInvitationByUserAndEvent(
                 invitedUser, activeEvent, Invitation.Status.REJECTED
         );
@@ -122,6 +123,7 @@ public class InvitationService {
         User inviterUser = userRepository.findById(inviterId).orElseThrow(() -> new RuntimeException("No inviter with ID: " + inviterId));
         User invitedUser = userRepository.findById(invitedId).orElseThrow(() -> new RuntimeException("No invited user with ID: " + invitedId));
 
+        // deprecates all other invitations that belong to both of the users
         List<Invitation> otherInvitations = invitationRepository.findAllByInviterUserOrInvitedUser(inviterUser, invitedUser);
         for (Invitation otherInvitation : otherInvitations ) {
             if (!otherInvitation.getId().equals(request.getInvitationId()) && otherInvitation.getStatus() == PENDING) {

@@ -1,13 +1,9 @@
 package com.dreamgames.backendengineeringcasestudy.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class InvitePartnerRequest {
-    @JsonProperty("inviterId")
     private Long inviterId;
-    @JsonProperty("invitedId")
     private Long invitedId;
-    @JsonProperty("eventId")
     private Long eventId;
 
     public InvitePartnerRequest() {}

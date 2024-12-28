@@ -45,6 +45,7 @@ public class UserService {
         newUser.setLevel(1);
         newUser.setCoins(2000);
 
+        // randomly assigns the user an ab group
         Character group = Math.random() < 0.5 ? 'A' : 'B';
         newUser.setAbGroup(group);
 
@@ -81,6 +82,7 @@ public class UserService {
 
         userRepository.save(user);
 
+        // leaderboard is updated in parallel to update user progress request
         Leaderboard leaderboard = leaderboardRepository.findByUser(user)
                 .orElseThrow(() -> new RuntimeException("Leaderboard entry not found"));
         leaderboard.setLevel(user.getLevel());
